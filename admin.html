@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Console | PushIdea</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/1067/1067357.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <style>
+
+        /* ==== PROFESSIONAL UPGRADE ==== */
+        body { font-family: 'DM Sans', sans-serif !important; background-color: #f0f4ff !important; }
+        .nav-item { font-family: 'DM Sans', sans-serif; border-radius: 12px !important; }
+        .nav-item.active { background: linear-gradient(135deg, #eff6ff, #dbeafe) !important; color: #2563eb !important; font-weight: 700 !important; }
+        .clean-card { border-radius: 18px !important; box-shadow: 0 2px 8px rgba(15,23,42,0.05) !important; }
+        h1,h2,h3,.font-bold { font-family: 'DM Sans', sans-serif; }
+        .text-2xl,.text-3xl,.text-4xl,.text-5xl { font-family: 'Outfit', sans-serif !important; letter-spacing: -0.5px; }
+        .input-field { border: 1.5px solid #e2e8f0 !important; border-radius: 11px !important; transition: all 0.2s !important; }
+        .input-field:focus { border-color: #2563eb !important; box-shadow: 0 0 0 4px rgba(37,99,235,0.08) !important; background: #fff !important; }
+        .chat-bubble-me { background: linear-gradient(135deg, #2563eb, #3b82f6) !important; border-radius: 18px 18px 4px 18px !important; box-shadow: 0 2px 8px rgba(37,99,235,0.18) !important; }
+        .chat-bubble-them { background: #f1f5f9 !important; border-radius: 18px 18px 18px 4px !important; }
+
+        /* ==== PROFESSIONAL UPGRADE ==== */
+        body { font-family: 'DM Sans', sans-serif !important; background-color: #f0f4ff !important; }
+        .nav-item { font-family: 'DM Sans', sans-serif; border-radius: 12px !important; }
+        .nav-item.active { background: linear-gradient(135deg, #eff6ff, #dbeafe) !important; color: #2563eb !important; font-weight: 700 !important; }
+        .clean-card { border-radius: 18px !important; box-shadow: 0 2px 8px rgba(15,23,42,0.05) !important; }
+        h1,h2,h3,.font-bold { font-family: 'DM Sans', sans-serif; }
+        .text-2xl,.text-3xl,.text-4xl,.text-5xl { font-family: 'Outfit', sans-serif !important; letter-spacing: -0.5px; }
+        .input-field { border: 1.5px solid #e2e8f0 !important; border-radius: 11px !important; transition: all 0.2s !important; }
+        .input-field:focus { border-color: #2563eb !important; box-shadow: 0 0 0 4px rgba(37,99,235,0.08) !important; background: #fff !important; }
+        .chat-bubble-me { background: linear-gradient(135deg, #2563eb, #3b82f6) !important; border-radius: 18px 18px 4px 18px !important; box-shadow: 0 2px 8px rgba(37,99,235,0.18) !important; }
+        .chat-bubble-them { background: #f1f5f9 !important; border-radius: 18px 18px 18px 4px !important; }
+        /* SECURITY: Hide body until verified */
+        body { font-family: 'DM Sans', sans-serif; background-color: #f0f4ff; color: #0f172a; opacity: 0; transition: opacity 0.5s ease-in; }
+        
+        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 8px; font-weight: 600; font-size: 14px; color: #64748b; transition: all 0.2s; cursor: pointer; }
+        .sidebar-item:hover { background-color: #f1f5f9; color: #0f172a; }
+        .sidebar-item.active { background-color: #0f172a; color: white; }
+        .clean-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); overflow: hidden; }
+        .badge { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+        .modal-scroll::-webkit-scrollbar { width: 6px; }
+        .modal-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .stat-field { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .stat-label { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 4px; }
+        .stat-val { font-size: 13px; font-weight: 600; color: #0f172a; }
+
+/* ── TOAST ──────────────────────────────────────────────────────────────── */
+#toastContainer{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;}
+.toast{pointer-events:auto;display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:14px;font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:600;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,.2);max-width:340px;animation:toastIn .3s cubic-bezier(.16,1,.3,1);}
+@keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateY(8px)}}
+.toast-success{background:linear-gradient(135deg,#059669,#10b981);}
+.toast-error{background:linear-gradient(135deg,#dc2626,#ef4444);}
+.toast-info{background:linear-gradient(135deg,#2563eb,#3b82f6);}
+.toast-warn{background:linear-gradient(135deg,#d97706,#f59e0b);}
+/* ── ADMIN STATS ──────────────────────────────────────────────────────── */
+.admin-stat{display:flex;flex-direction:column;gap:2px;padding:12px 18px;background:#fff;border-radius:12px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(15,23,42,.04);}
+.admin-stat-num{font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;color:#0f172a;letter-spacing:-1px;}
+.admin-stat-lbl{font-size:10.5px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.4px;}
+
+/* ── ADMIN RESPONSIVE ────────────────────────────────────────────────────── */
+/* Mobile sidebar becomes top nav */
+@media(max-width:767px){
+  body.h-screen{height:auto!important;overflow:auto!important;}
+  aside{display:none!important;}
+  #adminMobileHeader{display:flex!important;}
+  main.flex-1{overflow:auto!important;}
+  header{padding:12px 16px!important;height:auto!important;flex-wrap:wrap;gap:8px;}
+  #adminStats{display:none!important;}
+  #section-projects,#section-users,#section-support{padding:12px!important;}
+  /* Tables scroll horizontally */
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:14px;}
+  table{min-width:600px;}
+  /* Cards instead of table rows on mobile */
+  .user-row-mobile{display:flex!important;}
+  th.hide-mobile,td.hide-mobile{display:none!important;}
+}
+/* Admin mobile header */
+#adminMobileHeader{display:none;position:fixed;top:0;left:0;right:0;z-index:100;background:#fff;border-bottom:1px solid #e2e8f0;height:56px;align-items:center;justify-content:space-between;padding:0 16px;box-shadow:0 1px 4px rgba(15,23,42,.06);}
+/* Mobile tab nav for admin sections */
+#adminMobTabs{display:none;}
+@media(max-width:767px){
+  #adminMobTabs{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:50;background:#fff;border-top:1px solid #e2e8f0;padding:8px 0 max(8px,env(safe-area-inset-bottom));justify-content:space-around;}
+  main{padding-bottom:80px!important;}
+  .admin-stat{padding:8px 12px;}
+  .admin-stat-num{font-size:18px;}
+  #section-projects .flex.gap-2.mb-6{flex-wrap:wrap;gap:6px!important;}
+  #section-projects .flex.gap-2.mb-6 button{font-size:11px;padding:7px 10px!important;}
+}
+.adm-mob-btn{display:flex;flex-direction:column;align-items:center;gap:2px;color:#94a3b8;font-size:10px;font-weight:700;text-transform:uppercase;border:none;background:transparent;cursor:pointer;padding:4px 10px;-webkit-tap-highlight-color:transparent;}
+.adm-mob-btn.active{color:#2563eb;}
+/* Stats bar wraps on smaller screens */
+@media(max-width:1100px){
+  header .flex.items-center.gap-3 > div:first-child{flex-wrap:wrap;gap:6px!important;}
+}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+.ticket-badge{background:#ef4444;color:#fff;border-radius:50px;font-size:10px;font-weight:700;padding:1px 7px;margin-left:auto;}
+    </style>
+</head>
+<body class="h-screen flex overflow-hidden" id="adminBody">
+
+    <div id="securityScreen" class="fixed inset-0 bg-slate-900 z-[999] flex flex-col items-center justify-center">
+        <div style="width:48px;height:48px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);border-radius:13px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+        <div style="width:32px;height:32px;border:3px solid rgba(59,130,246,.3);border-top-color:#3b82f6;border-radius:50%;animation:spin .8s linear infinite;margin-bottom:12px;"></div>
+        <p style="font-family:Outfit,sans-serif;font-size:13px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;">Authenticating Admin Access…</p>
+    </div>
+
+    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col z-20">
+        <div class="h-16 flex items-center px-6 border-b border-slate-100">
+            <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:30px;height:30px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);border-radius:8px;display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+                <div>
+                    <div style="font-family:Outfit,sans-serif;font-weight:700;font-size:15px;color:#0f172a;letter-spacing:-.3px;line-height:1;">PushIdea</div>
+                    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#ef4444;">Admin Console</div>
+                </div>
+            </div>
+        </div>
+        <div class="p-4 space-y-1">
+            <div class="text-[10px] font-bold text-slate-400 uppercase px-4 mb-2 mt-2">Management</div>
+            <div onclick="switchSection('projects')" id="nav-projects" class="sidebar-item active"><span><svg style="width:17px;height:17px;opacity:.75;vertical-align:middle;flex-shrink:0;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 01-1 1H9a1 1 0 01-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 017-7z"/></svg></span> Projects & Deal Flow</div>
+            <div onclick="switchSection('users')" id="nav-users" class="sidebar-item"><span></span> User Registry</div>
+            <div onclick="switchSection('support')" id="nav-support" class="sidebar-item"><span></span> Support Tickets</div>
+        </div>
+        <div class="mt-auto p-4 border-t border-slate-100">
+            <button onclick="window.location.href='index.html'" class="w-full py-2 bg-slate-50 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-100 transition">Exit Console</button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col bg-[#f8fafc] overflow-hidden relative" style="padding-top:0;">
+        
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+            <h2 id="pageTitle" class="font-bold text-slate-900">Project Approval Queue</h2>
+            <div class="flex items-center gap-3">
+                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                  <div class="admin-stat"><span id="sPendingUsers" class="admin-stat-num">—</span><span class="admin-stat-lbl">Pending Users</span></div>
+                  <div class="admin-stat"><span id="sPendingProj" class="admin-stat-num">—</span><span class="admin-stat-lbl">Pending Projects</span></div>
+                  <div class="admin-stat"><span id="sOpenTickets" class="admin-stat-num">—</span><span class="admin-stat-lbl">Open Tickets</span></div>
+                  <div class="admin-stat"><span id="sTotalUsers" class="admin-stat-num">—</span><span class="admin-stat-lbl">Total Users</span></div>
+                </div>
+                <div class="text-xs text-right hidden md:block">
+                    <p class="font-bold text-slate-900">System Online</p>
+                    <p class="text-slate-500" id="clock">...</p>
+                </div>
+                <button onclick="loadData()" class="w-8 h-8 flex items-center justify-center bg-slate-50 rounded-full hover:bg-slate-100 text-slate-500">↻</button>
+            </div>
+        </header>
+
+        <div id="section-projects" class="flex-1 overflow-y-auto p-8 fade-in">
+            <div class="flex gap-2 mb-6">
+                <button onclick="filterProjects('pending')" id="tab-pending" class="px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-bold shadow-md"><svg style="width:13px;height:13px;opacity:1;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Pending Review (<span id="countPending">0</span>)</button>
+                <button onclick="filterProjects('live')" id="tab-live" class="px-4 py-2 rounded-lg bg-white border border-slate-200 text-slate-600 text-sm font-bold hover:bg-slate-50"><svg style="width:13px;height:13px;opacity:1;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Live Market (<span id="countLive">0</span>)</button>
+                <button onclick="filterProjects('disabled')" id="tab-disabled" class="px-4 py-2 rounded-lg bg-white border border-slate-200 text-slate-600 text-sm font-bold hover:bg-slate-50"><svg style="width:13px;height:13px;opacity:1;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> Disabled (<span id="countDisabled">0</span>)</button>
+            </div>
+            <div class="clean-card"><div class="table-wrap"><table class="w-full text-left text-sm text-slate-500">
+                    <thead class="bg-slate-50 text-slate-700 font-bold uppercase text-xs border-b border-slate-200">
+                        <tr>
+                            <th class="p-4">Project Name</th>
+                            <th class="p-4">Founder</th>
+                            <th class="p-4">Submitted</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4 text-right w-80">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectTable" class="divide-y divide-slate-100"></tbody></table></div></div>
+        </div>
+
+        <div id="section-users" class="hidden flex-1 overflow-y-auto p-8 fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-bold text-lg text-slate-900">User Registry</h3>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                    <input id="userSearch" type="text" placeholder="Search users..." style="border:1px solid #e2e8f0;border-radius:10px;padding:8px 14px;font-size:13px;outline:none;font-family:'DM Sans',sans-serif;width:200px;">
+                    <select id="roleFilter" onchange="renderUsers()" style="border:1px solid #e2e8f0;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;color:#64748b;outline:none;background:#fff;">
+                      <option value="All">All Roles</option>
+                      <option value="Inventor">Founders</option>
+                      <option value="Investor">Investors</option>
+                    </select>
+                    <select id="statusFilter" onchange="renderUsers()" style="border:1px solid #e2e8f0;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;color:#64748b;outline:none;background:#fff;">
+                      <option value="All">All Status</option>
+                      <option value="pending">Pending</option>
+                      <option value="approved">Approved</option>
+                      <option value="disabled">Disabled</option>
+                    </select>
+                  </div>
+            </div>
+            <div class="clean-card"><div class="table-wrap"><table class="w-full text-left text-sm text-slate-500">
+                    <thead class="bg-slate-50 text-slate-700 font-bold uppercase text-xs border-b border-slate-200">
+                        <tr>
+                            <th class="p-4">User</th>
+                            <th class="p-4">Role</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4 text-right w-72">Controls</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTable" class="divide-y divide-slate-100"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="section-support" class="hidden flex-1 overflow-y-auto p-8 fade-in">
+            <div class="flex justify-between items-end mb-6">
+                <div>
+                    <h3 class="font-bold text-lg text-slate-900">Support Tickets</h3>
+                    <p class="text-xs text-slate-500 mt-1">Tickets are auto-deleted after 30 days.</p>
+                </div>
+                <input id="searchSupport" type="text" placeholder="Search tickets..." class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none w-64">
+            </div>
+            
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Active Inbox</h4>
+            <div id="ticketGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"></div>
+
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 border-t border-slate-200 pt-8">History (Last 30 Days)</h4>
+            <div id="resolvedGrid" class="space-y-3 opacity-80"></div>
+        </div>
+
+    </main>
+
+    <div id="reviewModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+        <div class="bg-white w-full max-w-4xl max-h-[90vh] rounded-xl shadow-2xl flex flex-col overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+                <div>
+                    <div class="flex items-center gap-2 mb-1"><span class="badge bg-blue-100 text-blue-700" id="rType">Type</span> <span class="text-xs text-slate-400 font-mono" id="rDate">Date</span></div>
+                    <h2 class="text-2xl font-bold text-slate-900" id="rTitle">Project Name</h2>
+                    <p class="text-sm text-slate-500">Founder: <span id="rFounder" class="font-bold text-slate-700">Name</span></p>
+                </div>
+                <button onclick="document.getElementById('reviewModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-800 text-2xl">&times;</button>
+            </div>
+            <div class="p-8 overflow-y-auto modal-scroll flex-1 bg-white">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-900 uppercase border-b pb-2 mb-3">1. Executive Summary</h4>
+                            <div class="space-y-3">
+                                <div class="stat-field"><span class="stat-label">Tagline</span><p class="stat-val" id="rTagline">...</p></div>
+                                <div class="stat-field"><span class="stat-label">Problem</span><p class="stat-val text-xs leading-relaxed" id="rProb">...</p></div>
+                                <div class="stat-field"><span class="stat-label">Solution</span><p class="stat-val text-xs leading-relaxed" id="rSol">...</p></div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-900 uppercase border-b pb-2 mb-3">2. Team & Legal</h4>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="stat-field"><span class="stat-label">Team Size</span><p class="stat-val" id="rTeam">...</p></div>
+                                <div class="stat-field"><span class="stat-label">Location</span><p class="stat-val" id="rLoc">...</p></div>
+                                <div class="stat-field"><span class="stat-label">Inc. Date</span><p class="stat-val" id="rInc">...</p></div>
+                                <div class="stat-field"><span class="stat-label">Website</span><a href="#" target="_blank" id="rWeb" class="stat-val text-blue-600 hover:underline">Link</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-900 uppercase border-b pb-2 mb-3">3. The Deal</h4>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="stat-field border-blue-200 bg-blue-50"><span class="stat-label text-blue-600">Funding Ask</span><p class="stat-val text-blue-700" id="rAsk">...</p></div>
+                                <div class="stat-field"><span class="stat-label">Equity</span><p class="stat-val" id="rEquity">...</p></div>
+                                <div class="stat-field"><span class="stat-label">Valuation</span><p class="stat-val" id="rVal">...</p></div>
+                                <div class="stat-field"><span class="stat-label">Min Ticket</span><p class="stat-val" id="rMin">...</p></div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-900 uppercase border-b pb-2 mb-3">4. Metrics & Traction</h4>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="stat-field"><span class="stat-label">Revenue (MRR)</span><p class="stat-val text-green-600" id="rRev">...</p></div>
+                                <div class="stat-field"><span class="stat-label">Burn Rate</span><p class="stat-val text-red-500" id="rBurn">...</p></div>
+                                <div class="stat-field"><span class="stat-label">Raised So Far</span><p class="stat-val" id="rRaised">...</p></div>
+                                <div class="stat-field"><span class="stat-label">Stage</span><p class="stat-val" id="rStage">...</p></div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-900 uppercase border-b pb-2 mb-3">5. Assets</h4>
+                            <div class="flex gap-2">
+                                <a href="#" target="_blank" id="rDeck" class="flex-1 py-2 bg-slate-100 text-center rounded text-xs font-bold text-slate-600 hover:bg-slate-200">Pitch Deck</a>
+                                <a href="#" target="_blank" id="rVideo" class="flex-1 py-2 bg-slate-100 text-center rounded text-xs font-bold text-slate-600 hover:bg-slate-200">Demo Video</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3 shrink-0" id="modalActions">
+                </div>
+        </div>
+    </div>
+
+    <div id="inspectModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 fade-in">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-start bg-slate-50">
+                <div class="flex items-center gap-4">
+                    <img id="mPic" class="w-16 h-16 rounded-full border-4 border-white shadow-md bg-slate-200 object-cover">
+                    <div>
+                        <h2 id="mName" class="text-xl font-bold text-slate-900 leading-none">User Name</h2>
+                        <div class="flex gap-2 mt-2">
+                            <span id="mRole" class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Role</span>
+                            <span id="mStatus" class="bg-slate-200 text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Status</span>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('inspectModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-800 text-2xl font-bold">&times;</button>
+            </div>
+            <div class="p-6 overflow-y-auto modal-scroll space-y-4">
+                <div><label class="text-[10px] font-bold text-slate-500 uppercase">Email</label><p id="mEmail" class="text-sm font-medium text-slate-900">...</p></div>
+                <div><label class="text-[10px] font-bold text-slate-500 uppercase">Phone</label><p id="mPhone" class="text-sm font-medium text-slate-900">...</p></div>
+                <div><label class="text-[10px] font-bold text-slate-500 uppercase">Company</label><p id="mCompany" class="text-sm font-medium text-slate-900">...</p></div>
+                <div><label class="text-[10px] font-bold text-slate-500 uppercase">Address</label><p id="mAddress" class="text-sm font-medium text-slate-900">...</p></div>
+                <div><a id="mLink" href="#" target="_blank" class="text-blue-600 text-xs font-bold hover:underline">View LinkedIn Profile</a></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, rtdb } from './firebase-config.js';
+        import { onValue, ref, get, update, push, set, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        window.currentReviewKey = null;
+
+        const _ICONS = {
+            success: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>',
+            error:   '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+            info:    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>',
+            warn:    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>',
+        };
+        function toast(msg, type='info', dur=4000) {
+            const el = document.createElement('div');
+            el.className = 'toast toast-'+type;
+            el.innerHTML = _ICONS[type] + '<span>' + msg + '</span>';
+            document.getElementById('toastContainer').appendChild(el);
+            setTimeout(() => { el.style.animation='toastOut .3s ease forwards'; setTimeout(()=>el.remove(),300); }, dur);
+        }
+        function confirmDialog(msg, sub='') {
+            return new Promise(resolve => {
+                const ov = document.getElementById('confirmOverlay');
+                document.getElementById('confirmMsg').textContent = msg;
+                document.getElementById('confirmSub').textContent = sub;
+                ov.style.display = 'flex';
+                const ok = document.getElementById('confirmOK'), ca = document.getElementById('confirmCancel');
+                const done = v => { ov.style.display='none'; ok.onclick=ca.onclick=null; resolve(v); };
+                ok.onclick = () => done(true); ca.onclick = () => done(false);
+            });
+        }
+        
+        // ── AUDIT LOG ──────────────────────────────────────────────────────
+        let _adminUid = null;
+        async function logAdminAction(action, targetKey, note='') {
+            if (!_adminUid) return;
+            try {
+                await push(ref(rtdb, 'admin_logs'), {
+                    adminUid: _adminUid, action, targetKey: targetKey||'', note, timestamp: Date.now()
+                });
+            } catch(e) { console.warn('Audit log failed:', e.message); }
+        }
+        // ───────────────────────────────────────────────────────────────────
+
+        let projectsCache = []; let usersCache = []; let ticketCache = {};
+        const TICKET_RETENTION = 30 * 24 * 60 * 60 * 1000; // 30 Days
+
+        const escapeHTML = (str) => str ? str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])) : "";
+
+        // --- STRICT SECURITY GATEKEEPER ---
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) { window.location.href = "index.html"; return; }
+            const snap = await get(ref(rtdb, `users/${user.uid}`));
+            const userData = snap.val();
+            if (!userData || userData.role !== 'Admin') { toast("Access denied. Admin accounts only.", "error"); setTimeout(()=>window.location.href="index.html", 2000); return; }
+            _adminUid = user.uid;
+            document.getElementById('securityScreen').classList.add('hidden');
+            document.body.style.opacity = "1";
+            loadData();
+        });
+
+        // --- NAVIGATION ---
+        window.switchSection = (id) => {
+            ['projects','users','support'].forEach(s => {
+                document.getElementById(`section-${s}`).classList.add('hidden');
+                document.getElementById(`nav-${s}`).classList.remove('active');
+            });
+            document.getElementById(`section-${id}`).classList.remove('hidden');
+            document.getElementById(`nav-${id}`).classList.add('active');
+            const titles = { projects: "Project Approval Queue", users: "User Registry", support: "Support Inbox" };
+            document.getElementById('pageTitle').innerText = titles[id];
+            // Re-render the section content when switching so data is always fresh
+            if (id === 'support')  renderSupport();
+            if (id === 'users')    renderUsers();
+            if (id === 'projects') filterProjects('pending');
+        };
+
+        // --- LOAD DATA (real-time listeners, called once on auth) ---
+        let _listenersSetUp = false;
+        // Keep clock ticking
+        setInterval(() => {
+            const el = document.getElementById('clock');
+            if (el) el.innerText = new Date().toLocaleTimeString();
+        }, 1000);
+
+        window.loadData = () => {
+            const time = new Date().toLocaleTimeString();
+            const clockEl = document.getElementById('clock');
+            if (clockEl) clockEl.innerText = time;
+            if (_listenersSetUp) return; // only register listeners once
+            _listenersSetUp = true;
+
+            // Show loading state
+            document.getElementById('projectTable').innerHTML = '<tr><td colspan="5" style="padding:24px;text-align:center;"><div style="display:flex;align-items:center;justify-content:center;gap:10px;color:#94a3b8;font-size:13px;"><div style="width:18px;height:18px;border:2px solid #e2e8f0;border-top-color:#2563eb;border-radius:50%;animation:spin .7s linear infinite;"></div>Loading…</div></td></tr>';
+            document.getElementById('userTable').innerHTML = '<tr><td colspan="5" style="padding:24px;text-align:center;"><div style="display:flex;align-items:center;justify-content:center;gap:10px;color:#94a3b8;font-size:13px;"><div style="width:18px;height:18px;border:2px solid #e2e8f0;border-top-color:#2563eb;border-radius:50%;animation:spin .7s linear infinite;"></div>Loading…</div></td></tr>';
+
+            // ── PROJECTS — real-time ─────────────────────────────────────
+            onValue(ref(rtdb, 'projects'), (pSnap) => {
+                projectsCache = [];
+                if (pSnap.exists()) {
+                    pSnap.forEach(child => {
+                        let p = child.val(); p.key = child.key;
+                        if (p.nameOfIdea) projectsCache.push(p);
+                    });
+                }
+                const tabEl = document.getElementById('tab-pending');
+                const tabLive = document.getElementById('tab-live');
+                const tabDis  = document.getElementById('tab-disabled');
+                const activeTab = tabLive?.classList.contains('bg-slate-900') ? 'live' :
+                                  tabDis?.classList.contains('bg-slate-900')  ? 'disabled' : 'pending';
+                filterProjects(activeTab);
+                updateAdminStats();
+            });
+
+            // ── USERS — real-time ─────────────────────────────────────────
+            onValue(ref(rtdb, 'users'), (uSnap) => {
+                usersCache = [];
+                if (uSnap.exists()) {
+                    uSnap.forEach(child => { let u = child.val(); u.uid = child.key; usersCache.push(u); });
+                }
+                renderUsers();
+                updateAdminStats();
+            });
+
+            // ── SUPPORT TICKETS — real-time ───────────────────────────────
+            onValue(ref(rtdb, 'support_tickets'), (tSnap) => {
+                ticketCache = tSnap.exists() ? tSnap.val() : {};
+                Object.entries(ticketCache).forEach(([key, t]) => {
+                    if ((Date.now() - (t.timestamp||0)) > TICKET_RETENTION) {
+                        remove(ref(rtdb, `support_tickets/${key}`)).catch(()=>{});
+                        delete ticketCache[key];
+                    }
+                });
+                updateAdminStats();
+                renderSupport();
+            });
+        };
+
+        // ── UPDATE STATS BAR ────────────────────────────────────────────────
+        function updateAdminStats() {
+            const pendingUsers = usersCache.filter(u => (u.status||'pending').toLowerCase() === 'pending').length;
+            const pendingProj  = projectsCache.filter(p => !p.status || p.status === 'submitted' || p.status === 'under_review').length;
+            const openTickets  = Object.values(ticketCache).filter(t => t.status !== 'resolved').length;
+            document.getElementById('sPendingUsers').textContent = pendingUsers;
+            document.getElementById('sPendingProj').textContent  = pendingProj;
+            document.getElementById('sOpenTickets').textContent  = openTickets;
+            document.getElementById('sTotalUsers').textContent   = usersCache.length;
+            // Ticket badge on nav
+            const nav = document.getElementById('nav-support');
+            if (nav) {
+                let badge = nav.querySelector('.ticket-badge');
+                if (openTickets > 0) {
+                    if (!badge) { badge = document.createElement('span'); badge.className = 'ticket-badge'; nav.appendChild(badge); }
+                    badge.textContent = openTickets;
+                } else if (badge) badge.remove();
+            }
+        }
+
+        async function sendNotification(uid, message) { await push(ref(rtdb, `users/${uid}/notifications`), { message: message, timestamp: Date.now(), read: false, type: 'system' }); }
+
+        // --- PROJECTS LOGIC ---
+        window.filterProjects = (type) => {
+            const btnPending = document.getElementById('tab-pending'); const btnLive = document.getElementById('tab-live'); const btnDisabled = document.getElementById('tab-disabled');
+            const table = document.getElementById('projectTable'); let filtered = [];
+            
+            [btnPending, btnLive, btnDisabled].forEach(b => { b.classList.remove('bg-slate-900', 'text-white'); b.classList.add('bg-white', 'text-slate-600', 'border'); });
+            const activeBtn = type === 'pending' ? btnPending : (type === 'live' ? btnLive : btnDisabled);
+            activeBtn.classList.remove('bg-white', 'text-slate-600', 'border'); activeBtn.classList.add('bg-slate-900', 'text-white', 'border-transparent');
+
+            if (type === 'pending') filtered = projectsCache.filter(p => p.status === 'submitted' || p.status === 'under_review' || !p.status);
+            else if (type === 'live') filtered = projectsCache.filter(p => p.status === 'approved' || p.status === 'live');
+            else filtered = projectsCache.filter(p => p.status === 'disabled');
+            
+            document.getElementById('countPending').innerText = projectsCache.filter(p => p.status === 'submitted' || !p.status || p.status === 'under_review').length;
+            document.getElementById('countLive').innerText = projectsCache.filter(p => p.status === 'approved').length;
+            document.getElementById('countDisabled').innerText = projectsCache.filter(p => p.status === 'disabled').length;
+            
+            table.innerHTML = "";
+            if (filtered.length === 0) { table.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">No projects in this queue.</td></tr>`; return; }
+            
+            filtered.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+            filtered.forEach(p => {
+                const date = p.timestamp ? new Date(p.timestamp).toLocaleDateString() : 'N/A';
+                let statusBadge = type === 'pending' ? `<span class="badge bg-amber-100 text-amber-700">Pending</span>` : (type === 'live' ? `<span class="badge bg-green-100 text-green-700">Live</span>` : `<span class="badge bg-red-100 text-red-700">Disabled</span>`);
+                let actionsHTML = '';
+                
+                if (type === 'pending') {
+                    actionsHTML = `<button onclick="reviewProject('${p.key}')" class="bg-blue-50 text-blue-600 px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-100 transition">Review</button>`;
+                } else if (type === 'live') {
+                    actionsHTML = `<div class="flex justify-end gap-2"><button onclick="toggleProjectStatus('${p.key}', 'disabled')" class="bg-amber-50 text-amber-600 px-3 py-1.5 rounded border border-amber-200 text-xs font-bold hover:bg-amber-100">Disable</button><button onclick="deleteProject('${p.key}')" class="bg-red-50 text-red-600 px-3 py-1.5 rounded border border-red-200 text-xs font-bold hover:bg-red-100">Delete</button><button onclick="reviewProject('${p.key}')" class="bg-blue-50 text-blue-600 px-3 py-1.5 rounded border border-blue-200 text-xs font-bold hover:bg-blue-100">Edit</button></div>`;
+                } else {
+                    actionsHTML = `<div class="flex justify-end gap-2"><button onclick="toggleProjectStatus('${p.key}', 'approved')" class="bg-green-50 text-green-600 px-3 py-1.5 rounded border border-green-200 text-xs font-bold hover:bg-green-100">Enable</button><button onclick="deleteProject('${p.key}')" class="bg-red-50 text-red-600 px-3 py-1.5 rounded border border-red-200 text-xs font-bold hover:bg-red-100">Delete</button><button onclick="reviewProject('${p.key}')" class="bg-blue-50 text-blue-600 px-3 py-1.5 rounded border border-blue-200 text-xs font-bold hover:bg-blue-100">View</button></div>`;
+                }
+                table.innerHTML += `<tr class="hover:bg-slate-50 transition border-b border-slate-50"><td class="p-4 font-bold text-slate-900">${escapeHTML(p.nameOfIdea)}</td><td class="p-4 text-slate-600">${escapeHTML(p.username)}</td><td class="p-4 text-xs font-mono text-slate-500">${date}</td><td class="p-4">${statusBadge}</td><td class="p-4 text-right">${actionsHTML}</td></tr>`;
+            });
+        };
+
+        window.reviewProject = (key) => {
+            const p = projectsCache.find(x => x.key === key); if(!p) return toast('Project data not found.','error'); window.currentReviewKey = key;
+            document.getElementById('rTitle').innerText = p.nameOfIdea; document.getElementById('rFounder').innerText = p.username; document.getElementById('rType').innerText = p.industry || "Tech"; document.getElementById('rDate').innerText = p.timestamp ? new Date(p.timestamp).toLocaleDateString() : "N/A";
+            document.getElementById('rTagline').innerText = p.tagline || "-"; document.getElementById('rProb').innerText = p.IdeaDescription || p.pProblem || "-"; document.getElementById('rSol').innerText = p.solution || p.pSolution || "-";
+            document.getElementById('rTeam').innerText = p.teamSize || "-"; document.getElementById('rLoc').innerText = p.location || "-"; document.getElementById('rInc').innerText = p.incDate || "-"; document.getElementById('rWeb').href = p.website || "#";
+            const cur = p.currency || "$"; document.getElementById('rAsk').innerText = `${cur} ${p.fundingGoal}`; document.getElementById('rEquity').innerText = `${p.equity}%`; document.getElementById('rVal').innerText = `${cur} ${p.valuation}`; document.getElementById('rMin').innerText = `${cur} ${p.minTicket}`;
+            document.getElementById('rRev').innerText = p.revenue || "0"; document.getElementById('rBurn').innerText = p.burn || "0"; document.getElementById('rRaised').innerText = p.raised || "0"; document.getElementById('rStage').innerText = p.stage || "Idea";
+            document.getElementById('rDeck').href = p.projectLink || "#"; document.getElementById('rVideo').href = p.videoLink || "#";
+            
+            const footer = document.getElementById('modalActions');
+            if (p.status === 'approved' || p.status === 'live') {
+                footer.innerHTML = `<button onclick="toggleProjectStatus('${key}', 'disabled'); document.getElementById('reviewModal').classList.add('hidden');" class="px-5 py-2.5 rounded-lg border border-red-200 text-red-600 text-sm font-bold hover:bg-red-50">Disable</button><button onclick="document.getElementById('reviewModal').classList.add('hidden')" class="px-5 py-2.5 rounded-lg bg-slate-100 text-slate-600 text-sm font-bold hover:bg-slate-200">Close</button>`;
+            } else if (p.status === 'disabled') {
+                footer.innerHTML = `<button onclick="toggleProjectStatus('${key}', 'approved'); document.getElementById('reviewModal').classList.add('hidden');" class="px-5 py-2.5 rounded-lg bg-green-600 text-white text-sm font-bold hover:bg-green-700 shadow-md">Enable</button><button onclick="document.getElementById('reviewModal').classList.add('hidden')" class="px-5 py-2.5 rounded-lg bg-slate-100 text-slate-600 text-sm font-bold hover:bg-slate-200">Close</button>`;
+            } else {
+                footer.innerHTML = `<button onclick="toggleProjectStatus('${key}', 'disabled'); document.getElementById('reviewModal').classList.add('hidden');" class="px-5 py-2.5 rounded-lg border border-red-200 text-red-600 text-sm font-bold hover:bg-red-50">Reject</button><button onclick="toggleProjectStatus('${key}', 'approved'); document.getElementById('reviewModal').classList.add('hidden');" class="px-5 py-2.5 rounded-lg bg-green-600 text-white text-sm font-bold hover:bg-green-700 shadow-md"><svg style="width:13px;height:13px;opacity:1;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Approve</button>`;
+            }
+            document.getElementById('reviewModal').classList.remove('hidden');
+        };
+
+        window.toggleProjectStatus = async (key, status) => {
+            const msg = status === 'approved' ? 'Project Approved & Live.' : 'Project Disabled.'; if(!(await confirmDialog(msg, status==='approved'?'This project will be visible in the marketplace.':'This project will be hidden from investors.'))) return;
+            try {
+                await update(ref(rtdb, `projects/${key}`), { status });
+                const p = projectsCache.find(x => x.key === key);
+                if (p && p.userid) {
+                    // Keep user's lightweight project ref in sync
+                    await update(ref(rtdb, `users/${p.userid}/project/${key}`), { status });
+                    await sendNotification(p.userid, `Project Update: ${status.toUpperCase()} — "${p.nameOfIdea}"`);
+                }
+                await logAdminAction(status==='approved'?'approve_project':'disable_project', key, p?.nameOfIdea||'');
+                toast(msg, 'success'); loadData();
+            } catch(e) { toast(e.message, 'error'); }
+        };
+
+        window.deleteProject = async (key) => {
+            if(!(await confirmDialog('Permanently delete this project?','This cannot be undone.'))) return;
+            const p = projectsCache.find(x => x.key === key);
+            try {
+                await remove(ref(rtdb, `projects/${key}`));
+                if(p && p.userid) await sendNotification(p.userid, `Your project "${p.nameOfIdea}" was removed by admin.`);
+                await logAdminAction('delete_project', key, p?.nameOfIdea||'');
+                toast('Project deleted.','success');
+            } catch(e) { toast('Error: '+e.message,'error'); }
+        };
+
+        function adminAvatarSVG(name) {
+            const l = (name||'?')[0].toUpperCase();
+            const c = ['#2563eb','#7c3aed','#059669','#d97706','#dc2626'][l.charCodeAt(0)%5];
+            return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><rect width='32' height='32' rx='16' fill='${encodeURIComponent(c)}'/><text x='50%' y='50%' dy='.35em' fill='white' font-size='13' font-family='system-ui' text-anchor='middle'>${l}</text></svg>`;
+        }
+
+        // --- USERS LOGIC (COMPLETELY FIXED & NORMALIZED) ---
+        function renderUsers() {
+            const table = document.getElementById('userTable'); 
+            const term = document.getElementById('userSearch').value.toLowerCase(); 
+            table.innerHTML = "";
+            
+            const roleF   = document.getElementById('roleFilter')?.value   || 'All';
+            const statusF = document.getElementById('statusFilter')?.value || 'All';
+            const filtered = usersCache.filter(u => {
+                const matchText = (u.name && u.name.toLowerCase().includes(term)) || (u.email && u.email.toLowerCase().includes(term));
+                const matchRole = roleF === 'All' || u.role === roleF;
+                const matchStat = statusF === 'All' || (u.status||'pending').toLowerCase() === statusF;
+                return matchText && matchRole && matchStat;
+            });
+            
+            filtered.forEach(u => {
+                // NORMALIZATION: Forces all status strings to lower case so "APPROVED" and "approved" act exactly the same.
+                const currentStatus = (u.status || 'pending').toLowerCase();
+                
+                // Construct Badge
+                let badge = `<span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-[10px] font-bold uppercase">Pending</span>`;
+                if (currentStatus === 'live' || currentStatus === 'approved') {
+                    badge = `<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-[10px] font-bold uppercase">Approved</span>`;
+                } else if (currentStatus === 'disabled' || currentStatus === 'frozen' || currentStatus === 'rejected') {
+                    badge = `<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-[10px] font-bold uppercase">Disabled</span>`;
+                }
+                
+                // Construct Controls
+                let controlsHTML = `<button onclick="inspectUser('${u.uid}')" class="text-xs font-bold bg-blue-50 text-blue-600 px-3 py-1.5 rounded border border-blue-200 hover:bg-blue-100">Inspect</button>`;
+
+                if (currentStatus === 'pending') {
+                    controlsHTML += `
+                        <button onclick="updateUserStatus('${u.uid}', 'approved')" class="text-xs font-bold bg-green-50 text-green-600 px-3 py-1.5 rounded border border-green-200 hover:bg-green-100">Approve</button>
+                        <button onclick="updateUserStatus('${u.uid}', 'disabled')" class="text-xs font-bold bg-amber-50 text-amber-600 px-3 py-1.5 rounded border border-amber-200 hover:bg-amber-100">Reject</button>
+                    `;
+                } else if (currentStatus === 'disabled' || currentStatus === 'frozen' || currentStatus === 'rejected') {
+                    controlsHTML += `<button onclick="updateUserStatus('${u.uid}', 'approved')" class="text-xs font-bold bg-green-50 text-green-600 px-3 py-1.5 rounded border border-green-200 hover:bg-green-100">Enable</button>`;
+                } else {
+                    controlsHTML += `<button onclick="updateUserStatus('${u.uid}', 'disabled')" class="text-xs font-bold bg-amber-50 text-amber-600 px-3 py-1.5 rounded border border-amber-200 hover:bg-amber-100">Disable</button>`;
+                }
+
+                controlsHTML += `<button onclick="deleteUser('${u.uid}')" class="text-xs font-bold bg-red-50 text-red-600 px-3 py-1.5 rounded border border-red-200 hover:bg-red-100">Delete</button>`;
+
+                const joinedDate = u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—';
+                table.innerHTML += `
+                    <tr class="border-b border-slate-50 hover:bg-slate-50 transition">
+                        <td class="p-4 flex items-center gap-3">
+                            <img src="${u.profile || adminAvatarSVG(u.name)}" onerror="this.src=adminAvatarSVG(this.dataset.name||'?')" data-name="${escapeHTML(u.name)}" class="w-8 h-8 rounded-full bg-slate-200 object-cover border border-slate-200">
+                            <div>
+                                <p class="font-bold text-slate-900">${escapeHTML(u.name)}</p>
+                                <p class="text-xs text-slate-500">${escapeHTML(u.email)}</p>
+                            </div>
+                        </td>
+                        <td class="p-4 font-medium text-slate-600">${u.role}</td>
+                        <td class="p-4">${badge}</td>
+                        <td class="p-4 hidden md:table-cell" style="font-size:12px;color:#94a3b8;">${joinedDate}</td>
+                        <td class="p-4 text-right flex justify-end gap-2">${controlsHTML}</td>
+                    </tr>`;
+            });
+        }
+        document.getElementById('userSearch').addEventListener('input', renderUsers);
+        // roleFilter and statusFilter use onchange inline already
+
+        window.inspectUser = (uid) => {
+            const u = usersCache.find(x => x.uid === uid); if (!u) return;
+            const currentStatus = (u.status || 'pending').toLowerCase(); // Normalize for modal too
+
+            document.getElementById('mPic').src = u.profile || adminAvatarSVG(u.name || '?'); 
+            document.getElementById('mName').innerText = u.name || "No Name"; 
+            document.getElementById('mRole').innerText = u.role; 
+            document.getElementById('mStatus').innerText = currentStatus; // Will perfectly match the DB state
+            document.getElementById('mEmail').innerText = u.email || "-"; 
+            document.getElementById('mPhone').innerText = u.phone || "-"; 
+            document.getElementById('mAddress').innerText = u.address || "Not Provided"; 
+            document.getElementById('mCompany').innerText = u.company || "-";
+            
+            const link = document.getElementById('mLink'); 
+            if(u.linkedin) { const lnkUrl = /^https?:\/\//i.test(u.linkedin) ? u.linkedin : 'https://' + u.linkedin; link.href = lnkUrl; link.classList.remove('hidden'); } else { link.classList.add('hidden'); }
+            document.getElementById('inspectModal').classList.remove('hidden');
+        };
+
+        window.updateUserStatus = async (uid, newStatus) => { 
+            if(!(await confirmDialog(`Change user status to ${newStatus.toUpperCase()}?`,''))) return;
+            try {
+                const targetUser = usersCache.find(x=>x.uid===uid);
+                await update(ref(rtdb, `users/${uid}`), { status: newStatus });
+                if (newStatus === 'approved') {
+                    await sendNotification(uid, 'Your account has been verified and approved! You can now access the platform.');
+                    // If investor, publish to /directory/ so founders can find them
+                    if (targetUser && targetUser.role === 'Investor') {
+                        await set(ref(rtdb, `directory/${uid}`), {
+                            uid, name: targetUser.name||'', company: targetUser.company||'',
+                            jobTitle: targetUser.jobTitle||'', industry: targetUser.industry||'',
+                            profile: targetUser.profile||'', status: 'approved'
+                        });
+                    }
+                } else if (newStatus === 'disabled') {
+                    // Remove from directory if disabled
+                    remove(ref(rtdb, `directory/${uid}`)).catch(()=>{});
+                }
+                await logAdminAction(newStatus==='approved'?'approve_user':'disable_user', uid);
+                toast('User status updated to '+newStatus+'.','success');
+            } catch(e) { toast('Error: '+e.message,'error'); } 
+        };
+        
+        window.deleteUser = async (uid) => {
+            if (uid === _adminUid) { toast('You cannot delete your own admin account.', 'warn'); return; }
+            if(!(await confirmDialog('Permanently delete this user?','This is permanent and cannot be undone.'))) return;
+            try {
+                await remove(ref(rtdb, `users/${uid}`));
+                await logAdminAction('delete_user', uid);
+                toast('User deleted.','success');
+            } catch(e) { toast('Error: '+e.message,'error'); } 
+        };
+
+        // --- SUPPORT ---
+        function renderSupport() {
+            const grid = document.getElementById('ticketGrid'); const history = document.getElementById('resolvedGrid'); const term = document.getElementById('searchSupport').value.toLowerCase(); 
+            grid.innerHTML = ""; history.innerHTML = "";
+            const tickets = Object.entries(ticketCache).reverse();
+            if(tickets.length === 0) {
+                grid.innerHTML = `<div class="col-span-full" style="text-align:center;padding:48px 24px;background:#fff;border-radius:16px;border:1px dashed #e2e8f0;">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round" style="margin:0 auto 14px;display:block;"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                    <p style="font-family:Outfit,sans-serif;font-size:15px;font-weight:700;color:#0f172a;margin-bottom:6px;">No support tickets</p>
+                    <p style="font-size:13px;color:#94a3b8;">Tickets submitted by users will appear here in real time.</p>
+                </div>`;
+                return;
+            }
+
+            tickets.forEach(([key, t]) => {
+                if (term && !JSON.stringify(t).toLowerCase().includes(term)) return;
+                const time = new Date(t.timestamp).toLocaleDateString();
+                const badgeColor = t.role === 'Investor' ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600';
+                
+                const html = `
+                    <div class="clean-card p-5 border-l-4 ${t.status === 'resolved' ? 'border-l-green-500' : 'border-l-blue-500'}">
+                        <div class="flex justify-between items-start mb-2"><span class="badge ${badgeColor}">${t.role}</span><span class="text-xs text-slate-400 font-mono">${time}</span></div>
+                        <h4 class="font-bold text-slate-900 text-sm mb-1">${escapeHTML(t.subject)}</h4>
+                        <p class="text-xs text-slate-600 mb-4 line-clamp-2">${escapeHTML(t.message)}</p>
+                        <div class="flex justify-between items-center border-t border-slate-50 pt-3 gap-2">
+                            <span class="text-xs font-bold text-slate-500 truncate max-w-[100px]">${escapeHTML(t.name)}</span>
+                            <div class="flex gap-2">
+                                ${t.status !== 'resolved' ? `<button onclick="resolveAndNotify('${key}')" class="px-3 py-1.5 bg-green-50 text-green-700 text-[10px] font-bold rounded hover:bg-green-100 border border-green-200">Resolve & Reply</button>` : `<span class="text-[10px] font-bold text-green-600 px-2 py-1 bg-green-50 rounded">Resolved</span>`}
+                                <button onclick="deleteTicket('${key}')" class="px-3 py-1.5 bg-red-50 text-red-600 text-[10px] font-bold rounded hover:bg-red-100 border border-red-200">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                if (t.status === 'resolved') history.innerHTML += html;
+                else grid.innerHTML += html;
+            });
+        }
+        document.getElementById('searchSupport').addEventListener('input', renderSupport);
+
+        window.resolveAndNotify = async (key) => {
+            const t = ticketCache[key]; if(!t) return toast("Ticket not found.","error");
+            if(!(await confirmDialog('Mark as resolved?','An email client will open to reply to the user.'))) return;
+            await update(ref(rtdb, `support_tickets/${key}`), { status: 'resolved' });
+            if (t.uid && t.uid !== 'anonymous') await sendNotification(t.uid, `Your support ticket "${t.subject}" has been resolved. Check your email.`);
+            window.location.href = `mailto:${t.email}?subject=${encodeURIComponent(`[Resolved] Re: ${t.subject} - PushIdea Support`)}&body=${encodeURIComponent(`Hi ${t.name},\n\nThis ticket has been marked as resolved.\n\nTicket: ${t.subject}\n\nBest,\nPushIdea Admin`)}`;
+        };
+
+        window.deleteTicket = async (key) => { if(!(await confirmDialog('Delete this ticket?',''))) return; await remove(ref(rtdb, `support_tickets/${key}`)); toast('Ticket deleted.','success'); };
+    </script>
+
+
+<!-- ADMIN MOBILE HEADER -->
+<div id="adminMobileHeader">
+  <div style="display:flex;align-items:center;gap:8px;">
+    <div style="width:28px;height:28px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);border-radius:7px;display:flex;align-items:center;justify-content:center;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+    <div>
+      <p style="font-family:Outfit,sans-serif;font-weight:700;font-size:14px;color:#0f172a;line-height:1;">PushIdea</p>
+      <p style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#ef4444;">Admin</p>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <span id="mobPageTitle" style="font-size:12px;font-weight:700;color:#64748b;">Projects</span>
+    <button onclick="loadData()" style="width:32px;height:32px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:#64748b;">↻</button>
+    <button onclick="window.location.href='index.html'" style="width:32px;height:32px;background:#fef2f2;border:1px solid #fee2e2;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </button>
+  </div>
+</div>
+<!-- ADMIN MOBILE TAB NAV -->
+<div id="adminMobTabs">
+  <button class="adm-mob-btn active" onclick="switchSection('projects');document.getElementById('mobPageTitle').textContent='Projects';document.querySelectorAll('.adm-mob-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 01-1 1H9a1 1 0 01-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 017-7z"/></svg>
+    Projects
+  </button>
+  <button class="adm-mob-btn" onclick="switchSection('users');document.getElementById('mobPageTitle').textContent='Users';document.querySelectorAll('.adm-mob-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    Users
+  </button>
+  <button class="adm-mob-btn" onclick="switchSection('support');document.getElementById('mobPageTitle').textContent='Support';document.querySelectorAll('.adm-mob-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    Support
+  </button>
+</div>
+
+<div id="toastContainer"></div>
+<div id="confirmOverlay" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(15,23,42,.55);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:20px;padding:28px;max-width:360px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,.25);">
+    <p id="confirmMsg" style="font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;color:#0f172a;margin-bottom:6px;"></p>
+    <p id="confirmSub" style="font-size:13px;color:#64748b;margin-bottom:22px;line-height:1.55;"></p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button id="confirmCancel" style="padding:9px 20px;background:#f1f5f9;color:#64748b;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button>
+      <button id="confirmOK" style="padding:9px 20px;background:#0f172a;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">Confirm</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

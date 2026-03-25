@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reset Password | PushIdea</title>
+<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/1067/1067357.png">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+.hidden{display:none!important;}
+body{font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#eef2ff;position:relative;overflow:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 55% at 15% 20%,rgba(37,99,235,.1) 0%,transparent 55%),radial-gradient(ellipse 55% 45% at 85% 75%,rgba(99,102,241,.08) 0%,transparent 55%);z-index:0;}
+body::after{content:'';position:fixed;inset:0;background-image:radial-gradient(rgba(37,99,235,.09) 1px,transparent 1px);background-size:28px 28px;mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,#000 30%,transparent 80%);z-index:0;}
+.orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.1;animation:drift 10s ease-in-out infinite;z-index:0;pointer-events:none;}
+.orb-1{width:450px;height:450px;background:#3b82f6;top:-150px;left:-100px;}
+.orb-2{width:350px;height:350px;background:#8b5cf6;bottom:-80px;right:-60px;animation-delay:-3s;}
+@keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-28px)}}
+.card{position:relative;z-index:10;background:#fff;border:1px solid rgba(226,232,240,.9);border-radius:26px;padding:46px 42px;max-width:430px;width:100%;text-align:center;box-shadow:0 0 0 1px rgba(255,255,255,.7) inset,0 28px 60px -14px rgba(15,23,42,.12);animation:cardIn .7s cubic-bezier(.16,1,.3,1) forwards;}
+@keyframes cardIn{from{opacity:0;transform:translateY(28px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.logo{display:inline-flex;align-items:center;gap:9px;margin-bottom:30px;}
+.logo-mark{width:34px;height:34px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(37,99,235,.28);}
+.logo-name{font-family:'Outfit',sans-serif;font-weight:700;font-size:17px;color:#0f172a;letter-spacing:-.3px;}
+.icon-box{width:64px;height:64px;background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;border:1px solid rgba(37,99,235,.14);box-shadow:0 4px 14px rgba(37,99,235,.1),0 0 0 6px rgba(37,99,235,.04);animation:bob 3s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+h2{font-family:'Outfit',sans-serif;font-size:21px;font-weight:700;color:#0f172a;letter-spacing:-.4px;margin-bottom:7px;}
+.subtitle{font-size:13.5px;color:#64748b;line-height:1.6;margin-bottom:26px;}
+#verifying{padding:28px 0;}
+.spinner{width:36px;height:36px;border:3px solid #e2e8f0;border-top-color:#2563eb;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.verif-txt{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;}
+#resetForm{text-align:left;}
+.form-grp{margin-bottom:17px;}
+.form-lbl{display:block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.55px;color:#64748b;margin-bottom:6px;margin-left:1px;}
+.input-wrap{position:relative;}
+.inp-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);display:flex;color:#94a3b8;}
+.input-field{width:100%;padding:12px 14px 12px 42px;border-radius:11px;border:1.5px solid #e2e8f0;outline:none;background:#f8fafc;font-size:14px;font-family:'DM Sans',sans-serif;color:#0f172a;transition:all .2s;}
+.input-field:focus{border-color:#2563eb;background:#fff;box-shadow:0 0 0 4px rgba(37,99,235,.08);}
+.input-field::placeholder{color:#94a3b8;}
+.strength-wrap{height:4px;background:#f1f5f9;border-radius:4px;margin-top:7px;overflow:hidden;}
+.strength-bar{height:100%;width:0%;border-radius:4px;transition:width .4s,background .4s;}
+.strength-hint{font-size:11px;font-weight:600;margin-top:4px;text-align:right;}
+#saveBtn{width:100%;padding:13px;background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;font-family:'Outfit',sans-serif;font-size:14.5px;font-weight:700;border:none;border-radius:13px;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(37,99,235,.28);margin-top:8px;}
+#saveBtn:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(37,99,235,.34);}
+#saveBtn:active{transform:scale(.98);}
+#saveBtn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+#successMsg{padding:10px 0;}
+.success-icon{width:68px;height:68px;background:linear-gradient(135deg,#dcfce7,#bbf7d0);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;border:2px solid #86efac;animation:pop .5s cubic-bezier(.16,1,.3,1) forwards;}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+.success-title{font-family:'Outfit',sans-serif;font-size:19px;font-weight:700;color:#0f172a;margin-bottom:7px;}
+.success-sub{font-size:13.5px;color:#64748b;margin-bottom:22px;}
+.back-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:13px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;font-family:'Outfit',sans-serif;font-weight:700;font-size:14.5px;border-radius:13px;text-decoration:none;transition:all .2s;box-shadow:0 4px 14px rgba(37,99,235,.24);}
+.back-btn:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(37,99,235,.3);}
+#errorMsg{background:#fef2f2;border:1.5px solid #fecaca;color:#dc2626;font-size:13px;font-weight:500;padding:11px 14px;border-radius:11px;margin-top:14px;text-align:left;line-height:1.5;}
+
+@media(max-width:480px){
+  .input-field{font-size:16px!important;}
+  body{padding:16px!important;}
+}
+</style>
+
+    <script>
+      // Check oobCode before showing form
+      (function() {
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('oobCode');
+        if (!code) {
+          document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('resetForm');
+            if (form) {
+              form.innerHTML = '<div style="text-align:center;padding:20px 0;">' +
+                '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round" style="margin:0 auto 16px;display:block;"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>' +
+                '<p style="font-family:Outfit,sans-serif;font-size:16px;font-weight:700;color:#0f172a;margin-bottom:8px;">Invalid Reset Link</p>' +
+                '<p style="font-size:13px;color:#64748b;margin-bottom:20px;">This password reset link is invalid or has expired.</p>' +
+                '<a href="index.html" style="display:inline-block;padding:10px 24px;background:#2563eb;color:#fff;border-radius:10px;font-family:Outfit,sans-serif;font-weight:700;font-size:13px;text-decoration:none;">Return to Login</a>' +
+                '</div>';
+            }
+          });
+        }
+      })();
+    </script>
+</head>
+<body>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="card">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <span class="logo-name">PushIdea</span>
+  </div>
+
+  <div class="icon-box">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      <polyline points="9 12 11 14 15 10"/>
+    </svg>
+  </div>
+
+  <h2>Reset Password</h2>
+  <p class="subtitle">Enter a new strong password to secure your account.</p>
+
+  <!-- STATE 1: Verifying -->
+  <div id="verifying">
+    <div class="spinner"></div>
+    <p class="verif-txt">Verifying link…</p>
+  </div>
+
+  <!-- STATE 2: Form -->
+  <div id="resetForm" class="hidden">
+    <div class="form-grp">
+      <label class="form-lbl">New Password</label>
+      <div class="input-wrap">
+        <span class="inp-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+        <input id="newPass" type="password" placeholder="Minimum 6 characters" class="input-field" autocomplete="new-password" oninput="checkStrength(this.value)">
+      </div>
+      <div class="strength-wrap"><div class="strength-bar" id="strengthBar"></div></div>
+      <p class="strength-hint" id="strengthHint" style="color:#94a3b8;">Enter a password above</p>
+    </div>
+    <div class="form-grp">
+      <label class="form-lbl">Confirm Password</label>
+      <div class="input-wrap">
+        <span class="inp-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg></span>
+        <input id="confirmPass" type="password" placeholder="Repeat your password" class="input-field" autocomplete="new-password">
+      </div>
+    </div>
+    <button id="saveBtn">Save New Password</button>
+  </div>
+
+  <!-- STATE 3: Success -->
+  <div id="successMsg" class="hidden">
+    <div class="success-icon">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h3 class="success-title">Password Updated</h3>
+    <p class="success-sub">Your account is now secured. Log in with your new password.</p>
+    <a href="index.html" class="back-btn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back to Login
+    </a>
+  </div>
+
+  <div id="errorMsg" class="hidden"></div>
+</div>
+
+<script type="module">
+  import { auth } from './firebase-config.js';
+  import { confirmPasswordReset, verifyPasswordResetCode } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+  const params     = new URLSearchParams(window.location.search);
+  const actionCode = params.get('oobCode');
+  const mode       = params.get('mode');
+
+  const verifyDiv  = document.getElementById('verifying');
+  const formDiv    = document.getElementById('resetForm');
+  const successDiv = document.getElementById('successMsg');
+  const errorDiv   = document.getElementById('errorMsg');
+  const saveBtn    = document.getElementById('saveBtn');
+
+  window.checkStrength = (val) => {
+    const bar = document.getElementById('strengthBar'), hint = document.getElementById('strengthHint');
+    let s = 0;
+    if (val.length >= 6)  s++;
+    if (val.length >= 10) s++;
+    if (/[A-Z]/.test(val)) s++;
+    if (/\d/.test(val))    s++;
+    if (/[@$!%*?&]/.test(val)) s++;
+    const L = [{p:'0%',c:'#e2e8f0',t:'Enter a password above',tc:'#94a3b8'},{p:'20%',c:'#ef4444',t:'Too weak',tc:'#ef4444'},{p:'45%',c:'#f59e0b',t:'Fair',tc:'#d97706'},{p:'70%',c:'#3b82f6',t:'Good',tc:'#2563eb'},{p:'90%',c:'#22c55e',t:'Strong',tc:'#16a34a'},{p:'100%',c:'#15803d',t:'Excellent',tc:'#15803d'}];
+    const l = L[Math.min(s,5)];
+    bar.style.width=l.p; bar.style.background=l.c; hint.textContent=l.t; hint.style.color=l.tc;
+  };
+
+  async function init() {
+    if (!actionCode || mode !== 'resetPassword') {
+      verifyDiv.classList.add('hidden');
+      errorDiv.textContent = 'Invalid or expired link. Please request a new password reset from the login page.';
+      errorDiv.classList.remove('hidden');
+      return;
+    }
+    try {
+      await verifyPasswordResetCode(auth, actionCode);
+      verifyDiv.classList.add('hidden');
+      formDiv.classList.remove('hidden');
+    } catch {
+      verifyDiv.classList.add('hidden');
+      errorDiv.textContent = 'This link has expired or already been used. Please request a new password reset.';
+      errorDiv.classList.remove('hidden');
+    }
+  }
+
+  saveBtn.onclick = async () => {
+    const newPwd  = document.getElementById('newPass').value;
+    const confPwd = document.getElementById('confirmPass').value;
+    if (newPwd.length < 6)      { document.getElementById('pwErr').textContent='Password must be at least 6 characters.'; return; }
+    if (newPwd !== confPwd)     { document.getElementById('pwErr').textContent='Passwords do not match.'; return; }
+    saveBtn.textContent = 'Saving…';
+    saveBtn.disabled = true;
+    errorDiv.classList.add('hidden');
+    try {
+      await confirmPasswordReset(auth, actionCode, newPwd);
+      formDiv.classList.add('hidden');
+      successDiv.classList.remove('hidden');
+    } catch(e) {
+      errorDiv.textContent = 'Error: ' + e.message;
+      errorDiv.classList.remove('hidden');
+      saveBtn.textContent = 'Save New Password';
+      saveBtn.disabled = false;
+    }
+  };
+
+  init();
+</script>
+</body>
+</html>

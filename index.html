@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PushIdea — Where Founders Meet Investors</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><path d='M16 4L4 10l12 6 12-6-12-6zM4 20l12 6 12-6M4 15l12 6 12-6' stroke='white' stroke-width='2' fill='none' stroke-linecap='round'/></svg>">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --blue:#2563eb;--blue-d:#1d4ed8;--blue-l:#3b82f6;
+  --indigo:#6366f1;--ink:#0f172a;--ink2:#1e293b;
+  --muted:#64748b;--border:#e2e8f0;--surface:#f8fafc;
+  --green:#16a34a;--amber:#d97706;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;color:var(--ink);background:#060b18;overflow-x:hidden;}
+
+/* ── BACKGROUND ──────────────────────────────────────────── */
+.scene{position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 100% 80% at 50% -20%,#0f2456 0%,#060b18 60%);}
+.scene::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 80% 90%,rgba(99,102,241,.12) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 10% 70%,rgba(37,99,235,.08) 0%,transparent 60%);}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(37,99,235,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,235,.06) 1px,transparent 1px);background-size:64px 64px;-webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 20%,#000 10%,transparent 70%);mask-image:radial-gradient(ellipse 80% 60% at 50% 20%,#000 10%,transparent 70%);}
+.glow-1{position:fixed;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.18) 0%,transparent 70%);top:-200px;left:50%;transform:translateX(-50%);pointer-events:none;animation:glow-pulse 8s ease-in-out infinite;}
+.glow-2{position:fixed;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.12) 0%,transparent 70%);bottom:-100px;right:-100px;pointer-events:none;animation:glow-pulse 10s ease-in-out infinite reverse;}
+@keyframes glow-pulse{0%,100%{opacity:.7;transform:translateX(-50%) scale(1);}50%{opacity:1;transform:translateX(-50%) scale(1.08);}}
+@keyframes glow-pulse2{0%,100%{opacity:.7;}50%{opacity:1;}}
+
+/* ── LOADER ──────────────────────────────────────────────── */
+#loadingOverlay{position:fixed;inset:0;z-index:999;background:#060b18;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
+#loadingOverlay.hidden{display:none;}
+.load-mark{width:52px;height:52px;background:linear-gradient(135deg,var(--blue-d),var(--blue-l));border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(37,99,235,.4);animation:popIn .5s cubic-bezier(.16,1,.3,1);}
+@keyframes popIn{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+.load-spin{width:32px;height:32px;border:2.5px solid rgba(255,255,255,.1);border-top-color:var(--blue-l);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── NAV ─────────────────────────────────────────────────── */
+nav{position:fixed;top:0;width:100%;z-index:100;background:rgba(6,11,24,.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06);}
+.nav-inner{max-width:1120px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-mark{width:34px;height:34px;background:linear-gradient(135deg,var(--blue-d),var(--blue-l));border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(37,99,235,.35);}
+.logo-text{font-family:'Outfit',sans-serif;font-weight:700;font-size:18px;color:#fff;letter-spacing:-.3px;}
+.btn-nav-ghost{padding:8px 16px;font-size:13px;font-weight:600;color:rgba(255,255,255,.6);background:transparent;border:none;cursor:pointer;border-radius:8px;transition:all .2s;}
+.btn-nav-ghost:hover{color:#fff;background:rgba(255,255,255,.06);}
+.btn-nav-primary{padding:8px 22px;font-size:13px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--blue-d),var(--blue-l));border:none;cursor:pointer;border-radius:50px;box-shadow:0 0 20px rgba(37,99,235,.35);transition:all .25s;font-family:'Outfit',sans-serif;letter-spacing:-.1px;}
+.btn-nav-primary:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(37,99,235,.5);}
+
+/* ── HERO ────────────────────────────────────────────────── */
+.hero{padding:140px 24px 80px;max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:60px;align-items:center;}
+@media(min-width:900px){.hero{grid-template-columns:1fr 1fr;padding:160px 24px 100px;}}
+.hero-left{display:flex;flex-direction:column;}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.25);border-radius:50px;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#60a5fa;margin-bottom:24px;width:fit-content;animation:fadeUp .6s .1s both;}
+.pill-dot{width:6px;height:6px;background:#60a5fa;border-radius:50%;animation:pulse-dot 2s ease-in-out infinite;box-shadow:0 0 6px #60a5fa;}
+@keyframes pulse-dot{0%,100%{opacity:1;box-shadow:0 0 6px #60a5fa}50%{opacity:.4;box-shadow:none}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+h1{font-family:'Outfit',sans-serif;font-size:clamp(38px,6vw,68px);font-weight:900;color:#fff;line-height:1.05;letter-spacing:-2.5px;margin-bottom:20px;animation:fadeUp .7s .2s both;}
+.accent{background:linear-gradient(135deg,#60a5fa 0%,#a78bfa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-size:clamp(15px,2vw,17.5px);color:rgba(255,255,255,.5);line-height:1.75;max-width:440px;margin-bottom:36px;font-weight:400;animation:fadeUp .7s .3s both;}
+
+/* ── HERO ACTIONS ────────────────────────────────────────── */
+.hero-actions{display:flex;flex-direction:column;gap:12px;animation:fadeUp .7s .4s both;}
+@media(min-width:480px){.hero-actions{flex-direction:row;align-items:center;}}
+.btn-hero-primary{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:linear-gradient(135deg,var(--blue-d),var(--blue-l));color:#fff;font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;border:none;border-radius:14px;cursor:pointer;box-shadow:0 0 30px rgba(37,99,235,.4);transition:all .25s cubic-bezier(.16,1,.3,1);letter-spacing:-.2px;text-decoration:none;}
+.btn-hero-primary:hover{transform:translateY(-2px);box-shadow:0 0 50px rgba(37,99,235,.55);}
+.btn-hero-secondary{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.75);font-family:'Outfit',sans-serif;font-weight:600;font-size:14px;border:1px solid rgba(255,255,255,.1);border-radius:14px;cursor:pointer;transition:all .25s;letter-spacing:-.1px;}
+.btn-hero-secondary:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:#fff;}
+
+/* ── HERO VISUAL ─────────────────────────────────────────── */
+.hero-right{position:relative;display:flex;justify-content:center;animation:fadeUp .8s .3s both;}
+@media(max-width:899px){.hero-right{display:none;}}
+.hero-visual{position:relative;width:100%;max-width:480px;}
+.hv-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:18px;box-shadow:0 24px 60px rgba(0,0,0,.4);}
+.hv-main{animation:float 6s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.hv-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:50px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+.hv-chip-blue{background:rgba(37,99,235,.2);color:#60a5fa;border:1px solid rgba(37,99,235,.3);}
+.hv-chip-green{background:rgba(22,163,74,.2);color:#4ade80;border:1px solid rgba(22,163,74,.3);}
+.hv-chip-purple{background:rgba(139,92,246,.2);color:#c4b5fd;border:1px solid rgba(139,92,246,.3);}
+.hv-bar{height:6px;border-radius:3px;background:rgba(255,255,255,.06);}
+.hv-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--blue-d),var(--blue-l));}
+.hv-avatar{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,.1);}
+.hv-floating{position:absolute;background:rgba(6,11,24,.9);border:1px solid rgba(255,255,255,.1);border-radius:14px;backdrop-filter:blur(12px);padding:10px 14px;box-shadow:0 12px 32px rgba(0,0,0,.4);}
+.hv-f1{top:-24px;right:-16px;animation:float 5s 1s ease-in-out infinite;}
+.hv-f2{bottom:-20px;left:-20px;animation:float 7s 2s ease-in-out infinite;}
+
+/* ── SOCIAL PROOF TICKER ─────────────────────────────────── */
+.ticker-wrap{overflow:hidden;padding:20px 0;border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.02);margin-bottom:0;}
+.ticker-track{display:flex;width:max-content;animation:ticker 30s linear infinite;}
+.ticker-track:hover{animation-play-state:paused;}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{display:flex;align-items:center;gap:7px;padding:0 28px;white-space:nowrap;font-size:13px;color:rgba(255,255,255,.35);font-weight:500;}
+.ticker-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+
+/* ── STATS BAR ───────────────────────────────────────────── */
+.stats-section{max-width:1120px;margin:0 auto;padding:60px 24px;}
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:rgba(255,255,255,.06);border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,.06);}
+@media(min-width:700px){.stats-grid{grid-template-columns:repeat(4,1fr);}}
+.stat-cell{padding:28px 24px;background:#0a1020;text-align:center;transition:background .2s;}
+.stat-cell:hover{background:#0d1428;}
+.stat-num{font-family:'Outfit',sans-serif;font-size:36px;font-weight:900;color:#fff;letter-spacing:-1.5px;display:block;line-height:1;}
+.stat-num span{background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.stat-label{font-size:12px;font-weight:600;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-top:6px;display:block;}
+
+/* ── HOW IT WORKS ────────────────────────────────────────── */
+.section{max-width:1120px;margin:0 auto;padding:80px 24px;}
+.section-label{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#60a5fa;margin-bottom:16px;}
+.section-title{font-family:'Outfit',sans-serif;font-size:clamp(28px,4vw,42px);font-weight:800;color:#fff;letter-spacing:-1.5px;line-height:1.1;margin-bottom:14px;}
+.section-sub{font-size:16px;color:rgba(255,255,255,.4);line-height:1.7;max-width:520px;}
+.hiw-grid{display:grid;grid-template-columns:1fr;gap:2px;margin-top:52px;background:rgba(255,255,255,.05);border-radius:24px;overflow:hidden;border:1px solid rgba(255,255,255,.05);}
+@media(min-width:700px){.hiw-grid{grid-template-columns:repeat(3,1fr);}}
+.hiw-card{background:#080e1d;padding:32px;transition:background .25s;}
+.hiw-card:hover{background:#0c1526;}
+.hiw-step-num{font-family:'Outfit',sans-serif;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.2);margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.hiw-step-num::before{content:'';flex:1;height:1px;background:rgba(255,255,255,.06);}
+.hiw-icon-box{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;}
+.hiw-icon-1{background:rgba(37,99,235,.15);border:1px solid rgba(37,99,235,.25);}
+.hiw-icon-2{background:rgba(22,163,74,.15);border:1px solid rgba(22,163,74,.25);}
+.hiw-icon-3{background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.25);}
+.hiw-card-title{font-family:'Outfit',sans-serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:10px;letter-spacing:-.3px;}
+.hiw-card-desc{font-size:13.5px;color:rgba(255,255,255,.4);line-height:1.7;}
+.hiw-chip{display:inline-block;margin-top:14px;padding:3px 10px;border-radius:6px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+
+/* ── FEATURE BENTO ───────────────────────────────────────── */
+.bento{display:grid;grid-template-columns:1fr;gap:2px;margin-top:52px;background:rgba(255,255,255,.05);border-radius:24px;overflow:hidden;border:1px solid rgba(255,255,255,.05);}
+@media(min-width:700px){.bento{grid-template-columns:1fr 1fr;}}
+@media(min-width:1000px){.bento{grid-template-columns:5fr 4fr 4fr;}}
+.bento-card{background:#080e1d;padding:32px;transition:all .3s cubic-bezier(.16,1,.3,1);cursor:default;position:relative;overflow:hidden;}
+.bento-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(37,99,235,.06) 0%,transparent 60%);opacity:0;transition:opacity .3s;}
+.bento-card:hover{background:#0c1526;}
+.bento-card:hover::before{opacity:1;}
+.bento-lg{grid-column:1;}
+@media(min-width:700px){.bento-lg{grid-column:span 2;}}
+@media(min-width:1000px){.bento-lg{grid-column:1;grid-row:1;}}
+.bento-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
+.bento-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:rgba(255,255,255,.25);margin-bottom:10px;}
+.bento-title{font-family:'Outfit',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:10px;letter-spacing:-.3px;line-height:1.2;}
+.bento-desc{font-size:13.5px;color:rgba(255,255,255,.38);line-height:1.7;}
+.bento-sm .bento-title{font-size:17px;}
+
+/* ── CTA SECTION ─────────────────────────────────────────── */
+.cta-section{padding:80px 24px;text-align:center;}
+.cta-inner{max-width:700px;margin:0 auto;}
+.cta-cards{display:flex;flex-direction:column;gap:12px;max-width:520px;margin:40px auto 0;}
+@media(min-width:480px){.cta-cards{flex-direction:row;}}
+.cta-card{flex:1;padding:22px 18px;border-radius:20px;cursor:pointer;text-align:left;border:none;position:relative;overflow:hidden;transition:all .3s cubic-bezier(.16,1,.3,1);}
+.cta-card::after{content:'';position:absolute;bottom:-30px;right:-30px;width:80px;height:80px;border-radius:50%;opacity:.15;transition:transform .3s;}
+.cta-card:hover{transform:translateY(-4px);}
+.cta-card:hover::after{transform:scale(2);}
+.cta-founder{background:linear-gradient(135deg,#1d4ed8,#2563eb,#3b82f6);box-shadow:0 8px 32px rgba(37,99,235,.35);}
+.cta-founder::after{background:#fff;}
+.cta-founder:hover{box-shadow:0 16px 48px rgba(37,99,235,.5);}
+.cta-investor{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)!important;box-shadow:0 4px 20px rgba(0,0,0,.3);}
+.cta-investor:hover{border-color:rgba(255,255,255,.2)!important;background:rgba(255,255,255,.07);box-shadow:0 12px 36px rgba(0,0,0,.4);}
+.cta-icon-wrap{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
+.cta-founder .cta-icon-wrap{background:rgba(255,255,255,.15);}
+.cta-investor .cta-icon-wrap{background:rgba(37,99,235,.15);border:1px solid rgba(37,99,235,.2);}
+.cta-title{font-family:'Outfit',sans-serif;font-size:16.5px;font-weight:700;margin-bottom:4px;letter-spacing:-.2px;}
+.cta-founder .cta-title{color:#fff;}
+.cta-investor .cta-title{color:rgba(255,255,255,.85);}
+.cta-desc{font-size:12.5px;font-weight:500;}
+.cta-founder .cta-desc{color:rgba(255,255,255,.6);}
+.cta-investor .cta-desc{color:rgba(255,255,255,.35);}
+.cta-arrow{position:absolute;bottom:18px;right:18px;opacity:.4;transition:all .25s;}
+.cta-card:hover .cta-arrow{opacity:.8;transform:translate(2px,-2px);}
+
+/* ── TRUST BAR ───────────────────────────────────────────── */
+.trust-bar{max-width:1120px;margin:0 auto;padding:0 24px 80px;}
+.trust-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;background:rgba(255,255,255,.05);border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,.05);}
+@media(min-width:700px){.trust-grid{grid-template-columns:repeat(4,1fr);}}
+.trust-cell{background:#080e1d;padding:24px 20px;text-align:center;transition:background .2s;}
+.trust-cell:hover{background:#0c1526;}
+.trust-icon-box{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.2);}
+.trust-name{font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;color:rgba(255,255,255,.8);margin-bottom:5px;}
+.trust-desc{font-size:12px;color:rgba(255,255,255,.3);line-height:1.6;}
+
+/* ── FOOTER ──────────────────────────────────────────────── */
+footer{border-top:1px solid rgba(255,255,255,.06);padding:40px 24px;background:rgba(0,0,0,.3);}
+.footer-inner{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:16px;}
+@media(min-width:700px){.footer-inner{flex-direction:row;justify-content:space-between;}}
+.footer-logo{display:flex;align-items:center;gap:9px;}
+.footer-mark{width:28px;height:28px;background:linear-gradient(135deg,var(--blue-d),var(--blue-l));border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.footer-name{font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;color:rgba(255,255,255,.7);}
+.footer-links{display:flex;gap:20px;}
+.footer-links a{font-size:12.5px;color:rgba(255,255,255,.3);text-decoration:none;transition:color .2s;}
+.footer-links a:hover{color:rgba(255,255,255,.7);}
+.footer-copy{font-size:12px;color:rgba(255,255,255,.2);}
+
+/* ── SCROLL REVEAL ───────────────────────────────────────── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-delay-1{transition-delay:.1s;}
+.reveal-delay-2{transition-delay:.18s;}
+.reveal-delay-3{transition-delay:.26s;}
+.reveal-delay-4{transition-delay:.34s;}
+
+/* ── MODALS (preserving existing styles exactly) ─────────── */
+.hidden{display:none!important;}
+.modal-back{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:rgba(6,11,24,.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:16px;animation:bdin .2s ease-out;}
+@keyframes bdin{from{opacity:0}to{opacity:1}}
+.modal-box{width:95%;max-width:420px;max-height:88vh;background:#fff;border:1px solid rgba(226,232,240,.8);border-radius:22px;display:flex;flex-direction:column;position:relative;overflow:hidden;box-shadow:0 32px 80px -16px rgba(0,0,0,.5);animation:mdin .35s cubic-bezier(.16,1,.3,1);}
+@keyframes mdin{from{opacity:0;transform:translateY(22px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.input-field{width:100%;padding:11px 14px;border-radius:11px;border:1.5px solid #e2e8f0;outline:none;transition:all .2s;background:#f8fafc;font-size:14px;font-family:'DM Sans',sans-serif;color:#0f172a;}
+.input-field:focus{border-color:#2563eb;background:#fff;box-shadow:0 0 0 4px rgba(37,99,235,.08);}
+.input-field::placeholder{color:#94a3b8;}
+.field-label{display:block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.55px;color:#94a3b8;margin-bottom:5px;margin-left:1px;}
+#actionBtn{width:100%;background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;font-family:'Outfit',sans-serif;font-weight:700;font-size:14.5px;padding:12px;border-radius:11px;border:none;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(37,99,235,.22);margin-top:8px;}
+#actionBtn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(37,99,235,.32);}
+.google-btn{width:100%;background:#fff;border:1.5px solid #e2e8f0;color:#334155;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13.5px;padding:11px;border-radius:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:all .2s;}
+.google-btn:hover{background:#f8fafc;border-color:#cbd5e1;}
+.div-or{display:flex;align-items:center;gap:10px;margin:13px 0;}
+.div-or::before,.div-or::after{content:'';flex:1;height:1px;background:#f1f5f9;}
+.div-or span{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#cbd5e1;}
+.close-btn{position:absolute;top:14px;right:14px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:#f1f5f9;border-radius:50%;color:#64748b;font-size:17px;font-weight:700;border:none;cursor:pointer;transition:all .2s;line-height:1;z-index:10;}
+.close-btn:hover{background:#e2e8f0;color:#0f172a;}
+.modal-scroll::-webkit-scrollbar{width:3px;}
+.modal-scroll::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:10px;}
+.complete-btn{width:100%;background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;font-family:'Outfit',sans-serif;font-weight:700;font-size:14.5px;padding:13px;border-radius:11px;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.28);transition:all .2s;margin-top:14px;}
+.complete-btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(37,99,235,.34);}
+.hiw-trigger,.hiw-trigger.open{display:none;} /* old toggle hidden - new always-visible section replaces it */
+#hiwPanel{display:none;}
+
+/* ── TOAST ─────────────────────────────── */
+#toastContainer{position:fixed;top:80px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast{pointer-events:auto;display:flex;align-items:center;gap:9px;padding:11px 16px;border-radius:13px;font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:600;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,.2);max-width:320px;animation:toastIn .3s cubic-bezier(.16,1,.3,1);}
+@keyframes toastIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateY(-8px)}}
+.toast-s{background:linear-gradient(135deg,#059669,#10b981);}
+.toast-e{background:linear-gradient(135deg,#dc2626,#ef4444);}
+.toast-i{background:linear-gradient(135deg,#2563eb,#3b82f6);}
+.toast-w{background:linear-gradient(135deg,#d97706,#f59e0b);}
+
+/* ── INDEX RESPONSIVE ────────────────────────────────────────────────────── */
+@media(max-width:640px){
+  /* CTA cards stack better */
+  .cta-card{padding:18px 14px!important;}
+  /* Modal full on small screens */
+  .modal-box{border-radius:16px!important;}
+  /* Stats grid 2x2 */
+  .stats-grid{grid-template-columns:1fr 1fr!important;}
+  /* Section padding reduce */
+  .section{padding:48px 16px!important;}
+  /* HIW cards single col */
+  .hiw-grid,.bento{gap:1px!important;}
+  /* Hero padding */
+  .hero{padding:100px 16px 60px!important;}
+  /* Input font 16px iOS no-zoom */
+  .input-field{font-size:16px!important;}
+  select.input-field{font-size:16px!important;}
+  /* Nav */
+  .nav-inner{padding:0 14px!important;}
+}
+@media(max-width:400px){
+  h1{font-size:32px!important;letter-spacing:-1.5px!important;}
+}
+</style>
+</head>
+<body class="antialiased">
+
+<!-- SCENE -->
+<div class="scene"><div class="grid-bg"></div></div>
+<div class="glow-1"></div>
+<div class="glow-2" style="animation:glow-pulse2 10s ease-in-out infinite reverse;"></div>
+
+<!-- LOADING -->
+<div id="loadingOverlay" class="hidden">
+  <div class="load-mark">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+  </div>
+  <div class="load-spin"></div>
+  <p style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;color:#fff;">PushIdea</p>
+  <p id="loadingText" style="font-size:12.5px;color:rgba(255,255,255,.4);margin-top:3px;">Verifying credentials…</p>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <span class="logo-text">PushIdea</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button onclick="document.getElementById('contactModal').classList.remove('hidden')" class="btn-nav-ghost" id="supportBtn">Support</button>
+      <button id="navAuthBtn" onclick="openMenu('LOGIN')" class="btn-nav-primary">Log In</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<main>
+<section style="max-width:1120px;margin:0 auto;padding:0;">
+<div class="hero">
+  <!-- LEFT -->
+  <div class="hero-left">
+    <div class="pill"><span class="pill-dot"></span>Startup Matching Platform &nbsp;&bull;&nbsp; Invite-Only</div>
+    <h1>Turn Your <span class="accent">Idea</span> Into a<br>Funded Reality</h1>
+    <p class="hero-sub">PushIdea connects verified founders with accredited investors. Post your idea, get matched, negotiate privately — zero fees, zero middlemen.</p>
+    <div class="hero-actions">
+      <button onclick="openMenu('INVENTOR')" class="btn-hero-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 01-1 1H9a1 1 0 01-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 017-7z"/></svg>
+        Post Your Idea
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <button onclick="openMenu('INVESTOR')" class="btn-hero-secondary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+        Browse as Investor
+      </button>
+    </div>
+    <!-- Trust line -->
+    <div style="display:flex;align-items:center;gap:10px;margin-top:28px;animation:fadeUp .7s .5s both;">
+      <div style="display:flex;">
+        <div style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#6366f1);border:2px solid #060b18;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;margin-right:-6px;">F</div>
+        <div style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#059669,#10b981);border:2px solid #060b18;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;margin-right:-6px;">A</div>
+        <div style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#d97706,#f59e0b);border:2px solid #060b18;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;">R</div>
+      </div>
+      <p style="font-size:12.5px;color:rgba(255,255,255,.35);line-height:1.4;"><span style="color:rgba(255,255,255,.6);font-weight:600;">250+ verified members</span> already matching</p>
+    </div>
+  </div>
+
+  <!-- RIGHT: Product Visual -->
+  <div class="hero-right">
+    <div class="hero-visual">
+      <!-- Main card: deal card -->
+      <div class="hv-main hv-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <div>
+            <p style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:rgba(255,255,255,.3);margin-bottom:4px;">Live Deal</p>
+            <p style="font-family:'Outfit',sans-serif;font-size:17px;font-weight:700;color:#fff;letter-spacing:-.3px;">NeuraFlow AI</p>
+          </div>
+          <span class="hv-chip hv-chip-blue">AI / ML</span>
+        </div>
+        <p style="font-size:12.5px;color:rgba(255,255,255,.38);line-height:1.6;margin-bottom:18px;">Automated workflow intelligence for mid-market SaaS companies. Reduces ops time by 60%.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px;">
+          <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px;border:1px solid rgba(255,255,255,.06);">
+            <p style="font-size:10px;color:rgba(255,255,255,.3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;">Ask</p>
+            <p style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:800;color:#fff;letter-spacing:-.3px;">$500K</p>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px;border:1px solid rgba(255,255,255,.06);">
+            <p style="font-size:10px;color:rgba(255,255,255,.3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;">Equity</p>
+            <p style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:800;color:#fff;letter-spacing:-.3px;">8%</p>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px;border:1px solid rgba(255,255,255,.06);">
+            <p style="font-size:10px;color:rgba(255,255,255,.3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;">Stage</p>
+            <p style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:800;color:#fff;letter-spacing:-.3px;">Seed</p>
+          </div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:11px;color:rgba(255,255,255,.35);font-weight:600;">Investor Interest</span>
+            <span style="font-size:11px;color:#4ade80;font-weight:700;">74%</span>
+          </div>
+          <div class="hv-bar"><div class="hv-fill" style="width:74%;"></div></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="hv-avatar" style="background:linear-gradient(135deg,#2563eb,#6366f1);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">R</div>
+            <span style="font-size:12px;color:rgba(255,255,255,.45);font-weight:500;">Rahul Singh</span>
+            <span class="hv-chip hv-chip-green" style="font-size:9.5px;">Verified</span>
+          </div>
+          <span style="font-size:11px;color:rgba(255,255,255,.25);">2h ago</span>
+        </div>
+      </div>
+
+      <!-- Floating: match notification -->
+      <div class="hv-floating hv-f1" style="min-width:160px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80;flex-shrink:0;animation:pulse-dot 2s infinite;"></div>
+          <div>
+            <p style="font-size:11px;font-weight:700;color:#fff;">New Match!</p>
+            <p style="font-size:10px;color:rgba(255,255,255,.4);">Investor connected</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating: encrypted chat -->
+      <div class="hv-floating hv-f2" style="min-width:180px;">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <span style="font-size:10px;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:.5px;">E2E Encrypted</span>
+        </div>
+        <p style="font-size:11.5px;color:rgba(255,255,255,.55);">"Interested in a call this Friday?"</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <span class="ticker-item"><span class="ticker-dot" style="background:#4ade80;"></span>NeuraFlow AI — Seed Round $500K</span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:#60a5fa;"></span>GreenChain — Series A $2M</span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:#a78bfa;"></span>MedSync Health — Pre-Seed $180K</span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:#fb923c;"></span>PayFlow Fintech — Angel $320K</span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:#4ade80;"></span>AutoStack SaaS — Seed $750K</span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:#60a5fa;"></span>SolarMesh Energy — Bridge $1.1M</span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:#f472b6;"></span>LearnAI EdTech — Pre-Seed $250K</span>
+    <!-- Duplicate for seamless loop -->
+    <span class="ticker-item"><span class="ticker-dot" style="background:#4ade80;"></span>NeuraFlow AI — Seed Round $500K</span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:#60a5fa;"></span>GreenChain — Series A $2M</span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:#a78bfa;"></span>MedSync Health — Pre-Seed $180K</span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:#fb923c;"></span>PayFlow Fintech — Angel $320K</span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:#4ade80;"></span>AutoStack SaaS — Seed $750K</span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:#60a5fa;"></span>SolarMesh Energy — Bridge $1.1M</span>
+    <span class="ticker-item"><span class="ticker-dot" style="background:#f472b6;"></span>LearnAI EdTech — Pre-Seed $250K</span>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-section reveal">
+  <div class="stats-grid">
+    <div class="stat-cell">
+      <span class="stat-num"><span id="c1">0</span>+</span>
+      <span class="stat-label">Founders</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-num"><span id="c2">0</span>+</span>
+      <span class="stat-label">Investors</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-num">$<span id="c3">0</span>M+</span>
+      <span class="stat-label">In Deals</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-num"><span id="c4">0</span></span>
+      <span class="stat-label">Industries</span>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="reveal">
+    <p class="section-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Simple Process</p>
+    <h2 class="section-title">From Signup to<br><span class="accent">Funded</span> in 3 Steps</h2>
+    <p class="section-sub">No complex onboarding. No lengthy processes. Just a clean, verified path to your first deal.</p>
+  </div>
+  <div class="hiw-grid">
+    <div class="hiw-card reveal reveal-delay-1">
+      <p class="hiw-step-num">Step 01</p>
+      <div class="hiw-icon-box hiw-icon-1">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <h3 class="hiw-card-title">Create & Get Verified</h3>
+      <p class="hiw-card-desc">Sign up as a Founder or Investor. Our admin team manually reviews every profile within 24–48 hours before granting platform access.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;">
+        <span class="hiw-chip" style="background:rgba(37,99,235,.15);color:#60a5fa;border:1px solid rgba(37,99,235,.2);">Free to join</span>
+        <span class="hiw-chip" style="background:rgba(255,255,255,.05);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.08);">Manual review</span>
+      </div>
+    </div>
+    <div class="hiw-card reveal reveal-delay-2">
+      <p class="hiw-step-num">Step 02</p>
+      <div class="hiw-icon-box hiw-icon-2">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 01-1 1H9a1 1 0 01-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 017-7z"/></svg>
+      </div>
+      <h3 class="hiw-card-title">Post or Browse Deals</h3>
+      <p class="hiw-card-desc">Founders use a guided 5-step wizard to list their project and pitch deck. Investors browse and filter by industry, stage, and ticket size.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;">
+        <span class="hiw-chip" style="background:rgba(22,163,74,.15);color:#4ade80;border:1px solid rgba(22,163,74,.2);">Guided wizard</span>
+        <span class="hiw-chip" style="background:rgba(255,255,255,.05);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.08);">Smart filters</span>
+      </div>
+    </div>
+    <div class="hiw-card reveal reveal-delay-3">
+      <p class="hiw-step-num">Step 03</p>
+      <div class="hiw-icon-box hiw-icon-3">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c4b5fd" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      </div>
+      <h3 class="hiw-card-title">Connect & Close</h3>
+      <p class="hiw-card-desc">Investors request a connection. Founders accept or decline. Once matched, an end-to-end encrypted private chat opens to negotiate and close.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;">
+        <span class="hiw-chip" style="background:rgba(139,92,246,.15);color:#c4b5fd;border:1px solid rgba(139,92,246,.2);">E2E Encrypted</span>
+        <span class="hiw-chip" style="background:rgba(255,255,255,.05);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.08);">Zero commission</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES BENTO -->
+<section class="section" style="padding-top:0;">
+  <div class="reveal">
+    <p class="section-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Platform Features</p>
+    <h2 class="section-title">Built for Serious<br><span class="accent">Deal-Making</span></h2>
+  </div>
+  <div class="bento">
+    <!-- Large card -->
+    <div class="bento-card bento-lg reveal reveal-delay-1">
+      <div class="bento-icon" style="background:rgba(37,99,235,.15);border:1px solid rgba(37,99,235,.2);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+      </div>
+      <p class="bento-label">Security</p>
+      <h3 class="bento-title">Admin-Verified Members Only</h3>
+      <p class="bento-desc">Every founder and investor is manually reviewed by our team before getting access. No bots, no fakes — only real, serious players in the ecosystem.</p>
+      <div style="margin-top:20px;padding:14px;background:rgba(37,99,235,.07);border:1px solid rgba(37,99,235,.12);border-radius:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80;"></div>
+          <span style="font-size:12px;font-weight:600;color:rgba(255,255,255,.6);">Identity verified</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80;"></div>
+          <span style="font-size:12px;font-weight:600;color:rgba(255,255,255,.6);">Profile reviewed by admin</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80;"></div>
+          <span style="font-size:12px;font-weight:600;color:rgba(255,255,255,.6);">Contacts hidden until connected</span>
+        </div>
+      </div>
+    </div>
+    <!-- Small card 1 -->
+    <div class="bento-card bento-sm reveal reveal-delay-2">
+      <div class="bento-icon" style="background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.2);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c4b5fd" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      </div>
+      <p class="bento-label">Privacy</p>
+      <h3 class="bento-title">End-to-End Encrypted Chat</h3>
+      <p class="bento-desc">All messages are encrypted with AES-GCM 256-bit before leaving your device. Even we can't read your conversations.</p>
+    </div>
+    <!-- Small card 2 -->
+    <div class="bento-card bento-sm reveal reveal-delay-3">
+      <div class="bento-icon" style="background:rgba(22,163,74,.15);border:1px solid rgba(22,163,74,.2);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><circle cx="8" cy="8" r="2"/><circle cx="16" cy="16" r="2"/></svg>
+      </div>
+      <p class="bento-label">Business Model</p>
+      <h3 class="bento-title">Zero Commission, Forever</h3>
+      <p class="bento-desc">We charge nothing on deals. PushIdea is a pure matching platform — all financial terms are agreed directly between you and your partner.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA SECTION -->
+<section class="cta-section">
+  <div class="cta-inner reveal">
+    <p class="section-label" style="justify-content:center;">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Get Started Today
+    </p>
+    <h2 class="section-title" style="font-size:clamp(28px,4vw,44px);">Ready to Push<br><span class="accent">Your Idea</span> Forward?</h2>
+    <p class="section-sub" style="margin:0 auto;text-align:center;">Join hundreds of founders and investors already building the future.</p>
+    <div class="cta-cards">
+      <button onclick="openMenu('INVENTOR')" class="cta-card cta-founder">
+        <div class="cta-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 01-1 1H9a1 1 0 01-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 017-7z"/></svg>
+        </div>
+        <div class="cta-title">I Have an Idea</div>
+        <div class="cta-desc">Post · Pitch · Get Funded</div>
+        <div class="cta-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </button>
+      <button onclick="openMenu('INVESTOR')" class="cta-card cta-investor">
+        <div class="cta-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+        </div>
+        <div class="cta-title">I Want to Invest</div>
+        <div class="cta-desc">Browse · Review · Connect</div>
+        <div class="cta-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </button>
+    </div>
+    <!-- Security note -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:20px;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <p style="font-size:12px;color:rgba(255,255,255,.25);">No money moves through PushIdea. 100% free to join.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<div class="trust-bar">
+  <div class="trust-grid reveal">
+    <div class="trust-cell">
+      <div class="trust-icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+      <p class="trust-name">Admin Verified</p>
+      <p class="trust-desc">Every account manually reviewed before access</p>
+    </div>
+    <div class="trust-cell">
+      <div class="trust-icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24M1 1l22 22"/></svg></div>
+      <p class="trust-name">Contact Hidden</p>
+      <p class="trust-desc">Phone and email stay private until you connect</p>
+    </div>
+    <div class="trust-cell">
+      <div class="trust-icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+      <p class="trust-name">E2E Encrypted</p>
+      <p class="trust-desc">All chats encrypted with AES-GCM 256-bit</p>
+    </div>
+    <div class="trust-cell">
+      <div class="trust-icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><circle cx="8" cy="8" r="2"/><circle cx="16" cy="16" r="2"/></svg></div>
+      <p class="trust-name">Zero Commission</p>
+      <p class="trust-desc">We charge nothing on any deal, ever</p>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <div class="footer-mark">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <span class="footer-name">PushIdea</span>
+    </div>
+    <div class="footer-links">
+      <a href="#" onclick="showLegal('terms');return false;">Terms</a>
+      <a href="#" onclick="showLegal('privacy');return false;">Privacy</a>
+      <a href="#" onclick="document.getElementById('contactModal').classList.remove('hidden');return false;">Contact</a>
+    </div>
+    <p class="footer-copy">&copy; 2025 PushIdea &middot; Matching founders with capital</p>
+  </div>
+</footer>
+
+<!-- CONTACT MODAL -->
+<div id="contactModal" class="hidden modal-back">
+  <div class="modal-box" style="padding:26px;">
+    <button onclick="document.getElementById('contactModal').classList.add('hidden')" class="close-btn">&times;</button>
+    <h2 style="font-family:'Outfit',sans-serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:18px;">Contact Support</h2>
+    <div style="display:flex;flex-direction:column;gap:11px;">
+      <div><label class="field-label">Your Name</label><input id="guestName" type="text" placeholder="John Doe" class="input-field" autocomplete="name" maxlength="80"></div>
+      <div><label class="field-label">Email Address</label><input id="guestEmail" type="email" placeholder="you@example.com" class="input-field" autocomplete="email" maxlength="200"></div>
+      <div><label class="field-label">Subject</label><input id="guestSubject" type="text" placeholder="How can we help?" class="input-field" maxlength="200"></div>
+      <div><label class="field-label">Message</label><textarea id="guestMessage" rows="4" placeholder="Describe your issue…" class="input-field" style="resize:none;" maxlength="2000"></textarea></div>
+      <button onclick="submitGuestSupport()" style="width:100%;background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;padding:12px;border-radius:11px;border:none;cursor:pointer;margin-top:4px;transition:all .2s;">Send Message</button>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div id="authModal" class="hidden modal-back">
+  <div class="modal-box" style="padding:22px 26px;">
+    <button onclick="closeAuthModal()" class="close-btn">&times;</button>
+    <div style="text-align:center;margin-bottom:20px;margin-top:6px;">
+      <h2 id="modalTitle" style="font-family:'Outfit',sans-serif;font-size:21px;font-weight:800;color:var(--ink);letter-spacing:-.35px;">Welcome</h2>
+      <p id="modalSubtitle" style="color:#94a3b8;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:3px;">Enter your details</p>
+    </div>
+    <div id="roleDisplay" class="hidden" style="text-align:center;margin-bottom:14px;">
+      <span style="padding:5px 14px;border-radius:50px;background:#eff6ff;color:var(--blue);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;border:1px solid rgba(37,99,235,.15);">Joining as: <span id="roleName">…</span></span>
+    </div>
+    <div class="overflow-y-auto modal-scroll" style="padding-right:2px;">
+      <div id="resetFlowContainer" class="hidden" style="margin-bottom:12px;">
+        <div style="background:#eff6ff;border:1px solid rgba(37,99,235,.15);color:#1e40af;padding:12px 14px;border-radius:11px;font-size:13.5px;line-height:1.6;margin-bottom:11px;">We will send a password reset link to your email address.</div>
+        <input id="resetEmail" type="email" placeholder="you@example.com" class="input-field" autocomplete="email">
+      </div>
+      <div id="standardForm" style="display:flex;flex-direction:column;gap:12px;">
+        <!-- Honeypot: absorbs browser autofill before it reaches real fields -->
+        <input type="text" name="username_fake" style="display:none;" tabindex="-1" autocomplete="username" aria-hidden="true">
+        <input type="password" name="password_fake" style="display:none;" tabindex="-1" autocomplete="current-password" aria-hidden="true">
+
+        <div id="signupFields" class="hidden"><label class="field-label">Full Name</label><input id="name" type="text" placeholder="John Doe" class="input-field" autocomplete="given-name" maxlength="80"></div>
+        <div><label class="field-label">Email Address</label><input id="email" type="email" placeholder="you@example.com" class="input-field" autocomplete="off" maxlength="200"></div>
+        <div id="passwordContainer">
+          <label class="field-label">Password</label>
+          <div style="position:relative;">
+            <input id="password" type="password" placeholder="••••••••" class="input-field" style="padding-right:42px;" autocomplete="new-password">
+            <button type="button" onclick="togglePasswordVisibility()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:0;display:flex;">
+              <svg id="eyeIcon" style="width:16px;height:16px;opacity:.45;vertical-align:middle;" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg id="eyeOffIcon" style="width:16px;height:16px;opacity:.45;vertical-align:middle;display:none;" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24M1 1l22 22"/></svg>
+            </button>
+          </div>
+          <div id="forgotContainer" style="text-align:right;margin-top:5px;">
+            <button onclick="openMenu('RESET')" style="font-size:12px;font-weight:700;color:var(--blue);background:none;border:none;cursor:pointer;">Forgot Password?</button>
+          </div>
+        </div>
+        <div id="termsContainer" class="hidden">
+          <label style="display:flex;align-items:flex-start;gap:9px;cursor:pointer;padding:9px 11px;border-radius:10px;background:var(--surface);border:1px solid var(--border);">
+            <input type="checkbox" id="termsCheck" style="margin-top:2px;width:14px;height:14px;accent-color:var(--blue);">
+            <span style="font-size:12.5px;color:var(--muted);line-height:1.5;">I accept the <button onclick="showLegal('terms')" style="color:var(--blue);font-weight:700;background:none;border:none;cursor:pointer;font-size:12.5px;padding:0;">Terms</button> &amp; <button onclick="showLegal('privacy')" style="color:var(--blue);font-weight:700;background:none;border:none;cursor:pointer;font-size:12.5px;padding:0;">Privacy Policy</button>.</span>
+          </label>
+        </div>
+      </div>
+      <button id="actionBtn">Log In</button>
+      <div id="googleBtnContainer" style="margin-top:12px;">
+        <div class="div-or"><span>or</span></div>
+        <button onclick="handleGoogleLogin()" class="google-btn">
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" style="width:17px;height:17px;">
+          Continue with Google
+        </button>
+      </div>
+      <div style="text-align:center;padding-top:14px;border-top:1px solid #f1f5f9;margin-top:12px;">
+        <button id="backToLoginBtn" onclick="openMenu('LOGIN')" class="hidden" style="font-size:12px;font-weight:700;color:var(--muted);background:none;border:none;cursor:pointer;text-transform:uppercase;letter-spacing:.4px;">← Back to Login</button>
+        <button id="switchBtn" style="font-size:12px;font-weight:700;color:var(--muted);background:none;border:none;cursor:pointer;text-transform:uppercase;letter-spacing:.4px;transition:color .2s;">Create New Account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPLETION MODAL -->
+<div id="completionModal" class="hidden modal-back">
+  <div class="modal-box" style="max-width:490px;">
+    <div style="padding:20px 24px;border-bottom:1px solid #f1f5f9;background:var(--surface);">
+      <h2 style="font-family:'Outfit',sans-serif;font-size:18px;font-weight:800;color:var(--ink);letter-spacing:-.3px;">Complete Your Profile</h2>
+      <p style="color:#94a3b8;font-size:12.5px;margin-top:3px;">A few more details to verify your account.</p>
+    </div>
+    <div class="overflow-y-auto modal-scroll" style="padding:20px 24px;flex:1;">
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div>
+          <label class="field-label">Mobile Number <span style="color:#ef4444;">*</span></label>
+          <div style="display:flex;gap:7px;">
+            <select id="countryCode" class="input-field" style="width:84px;padding-left:7px;padding-right:7px;">
+              <option value="+1">🇺🇸 +1</option><option value="+91" selected>🇮🇳 +91</option><option value="+44">🇬🇧 +44</option>
+            </select>
+            <input id="completePhone" type="tel" placeholder="9876543210" class="input-field" style="flex:1;" autocomplete="tel">
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;">
+          <div><label id="lblCompany" class="field-label">Company / Project <span style="color:#ef4444;">*</span></label><input id="compName" type="text" class="input-field"></div>
+          <div><label id="lblJob" class="field-label">Your Role</label><input id="jobTitle" type="text" class="input-field"></div>
+        </div>
+        <div>
+          <label id="lblIndustry" class="field-label">Category</label>
+          <select id="industry" class="input-field" style="background:#fff;">
+            <option value="">Select…</option><option value="Fintech">Fintech</option><option value="HealthTech">HealthTech</option><option value="AI">AI / Tech</option><option value="E-Commerce">E-Commerce</option><option value="SaaS">SaaS</option><option value="Consumer">Consumer Apps</option><option value="Energy">Energy</option>
+          </select>
+        </div>
+        <div><label class="field-label">Address <span style="color:#ef4444;">*</span></label><textarea id="address" rows="2" class="input-field" style="resize:none;"></textarea></div>
+        <div><label class="field-label">LinkedIn / Website <span style="font-size:9.5px;color:var(--blue);">(Optional)</span></label><input id="linkedin" type="url" placeholder="https://…" class="input-field" autocomplete="url"></div>
+        <button onclick="saveMissingInfo()" class="complete-btn">Complete Signup</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LEGAL MODAL -->
+<div id="legalModal" class="hidden modal-back">
+  <div class="modal-box" style="max-width:600px;height:80vh;">
+    <div style="padding:18px 22px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;background:var(--surface);flex-shrink:0;">
+      <h3 id="legalTitle" style="font-family:'Outfit',sans-serif;font-size:17px;font-weight:700;color:var(--ink);">Terms of Service</h3>
+      <button onclick="document.getElementById('legalModal').classList.add('hidden')" class="close-btn" style="position:static;">&times;</button>
+    </div>
+    <div id="legalContent" class="modal-scroll" style="padding:24px;overflow-y:auto;font-size:13.5px;color:var(--muted);line-height:1.7;flex:1;"></div>
+    <div style="padding:14px 22px;border-top:1px solid #f1f5f9;flex-shrink:0;">
+      <button onclick="document.getElementById('legalModal').classList.add('hidden')" style="width:100%;padding:11px;background:var(--ink);color:#fff;font-family:'Outfit',sans-serif;font-weight:700;border-radius:11px;border:none;cursor:pointer;font-size:13.5px;">I Understand</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // ── TOAST SYSTEM (used by module script via window.toast) ─────────────────
+  const _TI={
+    s:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>',
+    e:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+    i:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>',
+    w:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>'
+  };
+  window.toast = function(msg, type, dur) {
+    type = type || 'i'; dur = dur || 4000;
+    var el = document.createElement('div');
+    el.className = 'toast toast-' + type;
+    el.innerHTML = (_TI[type]||'') + '<span>' + msg + '</span>';
+    var container = document.getElementById('toastContainer');
+    if (!container) { container = document.createElement('div'); container.id='toastContainer'; document.body.appendChild(container); }
+    container.appendChild(el);
+    setTimeout(function(){ el.style.animation='toastOut .3s ease forwards'; setTimeout(function(){el.remove();},300); }, dur);
+  };
+  // Alias for module script use
+  function toast(msg, type, dur) { window.toast(msg, type, dur); }
+
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); observer.unobserve(e.target); }});
+  }, { threshold:.1, rootMargin:'0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Animated counters
+  function animateCount(el, target, duration=1800){
+    let start=0, step=target/duration*16;
+    const timer=setInterval(()=>{
+      start+=step;
+      if(start>=target){ el.textContent=target; clearInterval(timer); return; }
+      el.textContent=Math.floor(start);
+    },16);
+  }
+  const statsObs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        animateCount(document.getElementById('c1'),200);
+        animateCount(document.getElementById('c2'),50);
+        animateCount(document.getElementById('c3'),2);
+        animateCount(document.getElementById('c4'),12);
+        statsObs.disconnect();
+      }
+    });
+  },{threshold:.5});
+  statsObs.observe(document.querySelector('.stats-grid'));
+
+  // Old toggleHIW preserved for compatibility (hidden section)
+  let hiwOpen=false;
+  function toggleHIW(){}
+</script>
+
+<script type="module">
+  import { auth, rtdb, googleProvider } from './firebase-config.js';
+  const toast = (...a) => window.toast(...a); // bridge from non-module
+  import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { ref, set, get, child, update, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+  let currentMode = 'LOGIN';
+  const btn = document.getElementById('actionBtn');
+  let tempUserUid = null, tempRole = null;
+
+  // Rate-limit login attempts
+  let loginAttempts = 0, loginLocked = false;
+  const MAX_ATTEMPTS = 5;
+
+  const esc = (str) => str ? String(str).replace(/[&<>'"]/g, t => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t])) : '';
+  const showLoader = (msg) => { document.getElementById('loadingText').innerText = msg || 'Processing…'; document.getElementById('loadingOverlay').classList.remove('hidden'); };
+  const hideLoader = () => document.getElementById('loadingOverlay').classList.add('hidden');
+  const isStrongPass = (v) => v.length >= 8 && /[A-Z]/.test(v) && /\d/.test(v) && /[@$!%*?&]/.test(v);
+
+  // Auth state
+  onAuthStateChanged(auth, async (user) => {
+    const nb = document.getElementById('navAuthBtn');
+    if (user) {
+      nb.textContent = 'Dashboard';
+      nb.onclick = () => checkAndRedirect(user.uid);
+    } else {
+      nb.textContent = 'Log In';
+      nb.onclick = () => openMenu('LOGIN');
+    }
+  });
+
+  window.togglePasswordVisibility = () => {
+    const p = document.getElementById('password');
+    const eye = document.getElementById('eyeIcon'), eyeOff = document.getElementById('eyeOffIcon');
+    p.type = p.type === 'password' ? 'text' : 'password';
+    eye.style.display = p.type === 'password' ? 'inline-block' : 'none';
+    eyeOff.style.display = p.type === 'password' ? 'none' : 'inline-block';
+  };
+
+  const legalData = {
+    INVENTOR: {
+      terms:`<h4 style="font-weight:700;color:#0f172a;margin-bottom:10px;">Founder Terms of Service</h4><ul style="list-style:disc;padding-left:18px;display:flex;flex-direction:column;gap:7px;"><li>You confirm ownership of the IP for the project you list.</li><li>You agree not to submit false or misleading information.</li><li>PushIdea is a matching platform and does not guarantee investment.</li><li>Sharing sensitive business information is at your own risk.</li></ul>`,
+      privacy:`<h4 style="font-weight:700;color:#0f172a;margin-bottom:10px;">Founder Privacy Policy</h4><p style="margin-bottom:10px;">We collect project details to match you with investors.</p><ul style="list-style:disc;padding-left:18px;display:flex;flex-direction:column;gap:7px;"><li>Your project summary is visible to verified investors.</li><li>Direct contact details are hidden until you accept a connection.</li></ul>`
+    },
+    INVESTOR: {
+      terms:`<h4 style="font-weight:700;color:#0f172a;margin-bottom:10px;">Investor Terms of Service</h4><ul style="list-style:disc;padding-left:18px;display:flex;flex-direction:column;gap:7px;"><li>You confirm you are an accredited investor capable of assessing risk.</li><li>You agree to keep founder data confidential.</li><li>You understand startups are high-risk investments.</li><li>PushIdea is not a broker-dealer and does not facilitate money transfers.</li></ul>`,
+      privacy:`<h4 style="font-weight:700;color:#0f172a;margin-bottom:10px;">Investor Privacy Policy</h4><p style="margin-bottom:10px;">We respect your privacy and deal flow preferences.</p><ul style="list-style:disc;padding-left:18px;display:flex;flex-direction:column;gap:7px;"><li>Your investment activity is private.</li><li>Founders cannot see your contact info unless you connect.</li></ul>`
+    }
+  };
+
+  window.showLegal = (type) => {
+    const mode = (currentMode==='INVENTOR'||currentMode==='INVESTOR') ? currentMode : 'INVENTOR';
+    document.getElementById('legalTitle').innerText = type==='terms' ? 'Terms of Service' : 'Privacy Policy';
+    document.getElementById('legalContent').innerHTML = legalData[mode][type==='terms'?'terms':'privacy'];
+    document.getElementById('legalModal').classList.remove('hidden');
+  };
+
+  window.submitGuestSupport = async () => {
+    const name=document.getElementById('guestName').value.trim(), email=document.getElementById('guestEmail').value.trim();
+    const subject=document.getElementById('guestSubject').value.trim(), message=document.getElementById('guestMessage').value.trim();
+    if (!name||!email||!subject||!message) return toast('Please fill in all fields.','w');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast('Please enter a valid email address.','w');
+    try {
+      const user = auth.currentUser;
+      await push(ref(rtdb,'support_tickets'), { name:esc(name).slice(0,120), email:esc(email).slice(0,200), subject:esc(subject).slice(0,200), message:esc(message).slice(0,2000), role: user?'User':'Guest', uid: user?user.uid:'anonymous', status:'open', timestamp:Date.now() });
+      toast('Message sent! Support will contact you via email.','s'); document.getElementById('contactModal').classList.add('hidden');
+      document.getElementById('guestMessage').value='';
+    } catch(e) { toast('Error: '+e.message,'e'); }
+  };
+
+  window.openMenu = (mode) => {
+    currentMode = mode;
+    if (auth.currentUser && mode!=='RESET') { checkAndRedirect(auth.currentUser.uid); return; }
+    document.getElementById('authModal').classList.remove('hidden');
+    const title=document.getElementById('modalTitle'), sub=document.getElementById('modalSubtitle'),
+      roleD=document.getElementById('roleDisplay'), sFields=document.getElementById('signupFields'),
+      passC=document.getElementById('passwordContainer'), terms=document.getElementById('termsContainer'),
+      switchB=document.getElementById('switchBtn'), backB=document.getElementById('backToLoginBtn'),
+      stdForm=document.getElementById('standardForm'), resetForm=document.getElementById('resetFlowContainer'),
+      forgot=document.getElementById('forgotContainer'), googleC=document.getElementById('googleBtnContainer');
+    [roleD,sFields,terms,backB,resetForm].forEach(e=>e.classList.add('hidden'));
+    [passC,switchB,stdForm,googleC].forEach(e=>e.classList.remove('hidden'));
+    forgot.classList.add('hidden');
+
+    // Always clear password field when switching modes to prevent stale autofill
+    const pwdInput = document.getElementById('password');
+    pwdInput.value = '';
+
+    if (mode==='LOGIN') {
+      title.innerText='Welcome Back'; sub.innerText='Log in to your account'; forgot.classList.remove('hidden'); btn.textContent='Log In';
+      switchB.textContent='Create New Account'; switchB.onclick=()=>{closeAuthModal();openMenu('INVENTOR');};
+      // Login mode: let browser suggest saved credentials
+      pwdInput.setAttribute('autocomplete','current-password');
+      document.getElementById('email').setAttribute('autocomplete','email');
+    } else if (mode==='RESET') {
+      title.innerText='Reset Password'; sub.innerText='Enter your email address';
+      stdForm.classList.add('hidden'); googleC.classList.add('hidden'); resetForm.classList.remove('hidden');
+      switchB.classList.add('hidden'); backB.classList.remove('hidden'); btn.textContent='Send Reset Link';
+    } else {
+      title.innerText='Create Account'; sub.innerText='Join PushIdea for free';
+      roleD.classList.remove('hidden'); document.getElementById('roleName').innerText = mode==='INVESTOR'?'Investor':'Founder';
+      sFields.classList.remove('hidden'); terms.classList.remove('hidden'); btn.textContent='Sign Up';
+      switchB.textContent='I already have an account'; switchB.onclick=()=>{closeAuthModal();openMenu('LOGIN');};
+      // Signup mode: block autofill entirely — new-password tells browser this is a new credential
+      pwdInput.setAttribute('autocomplete','new-password');
+      document.getElementById('email').setAttribute('autocomplete','off');
+    }
+  };
+  window.closeAuthModal = () => document.getElementById('authModal').classList.add('hidden');
+
+  async function checkAndRedirect(uid) {
+    showLoader('Checking credentials…');
+    try {
+      const snap = await get(child(ref(rtdb),`users/${uid}`));
+      if (!snap.exists()) { hideLoader(); toast('Account not found. Please sign up.','e'); await signOut(auth); return; }
+      const data = snap.val();
+      const status = (data.status||'pending').toLowerCase();
+      if (status==='disabled'||status==='frozen'||status==='rejected') { hideLoader(); toast('Account disabled or rejected. Contact support.','e'); await signOut(auth); return; }
+      if (data.role==='Admin') { window.location.href='admin.html'; return; }
+      if (!data.phone||!data.company||!data.address) {
+        hideLoader(); tempUserUid=uid; tempRole=data.role;
+        if (tempRole==='Investor') {
+          document.getElementById('lblCompany').textContent='Firm / Company Name *';
+          document.getElementById('compName').placeholder='e.g. Acme Capital';
+          document.getElementById('lblJob').textContent='Your Title';
+          document.getElementById('jobTitle').placeholder='e.g. Angel Investor';
+          document.getElementById('lblIndustry').textContent='Investment Focus';
+        } else {
+          document.getElementById('lblCompany').textContent='Startup / Project Name *';
+          document.getElementById('compName').placeholder='e.g. NextGen App';
+          document.getElementById('lblJob').textContent='Your Role';
+          document.getElementById('jobTitle').placeholder='e.g. Founder';
+          document.getElementById('lblIndustry').textContent='Industry';
+        }
+        document.getElementById('authModal').classList.add('hidden');
+        document.getElementById('completionModal').classList.remove('hidden');
+        return;
+      }
+      if (status!=='approved') { window.location.href='waiting.html'; }
+      else { window.location.href = data.role==='Investor'?'investor-dashboard.html':'inventor.html'; }
+    } catch(e) { hideLoader(); toast('Connection error. Please try again.','e'); }
+  }
+
+  window.saveMissingInfo = async () => {
+    const code=document.getElementById('countryCode').value;
+    const phone=document.getElementById('completePhone').value.trim();
+    const comp=document.getElementById('compName').value.trim();
+    const addr=document.getElementById('address').value.trim();
+    const job=document.getElementById('jobTitle').value.trim();
+    const ind=document.getElementById('industry').value;
+    let link=document.getElementById('linkedin').value.trim(); if (link && !/^https?:\/\//i.test(link)) link = 'https://' + link;
+    if (!phone||phone.length<5) return toast('Valid phone number required.','w');
+    if (!comp) return toast('Company / Project name is required.','w');
+    if (!addr) return toast('Address is required.','w');
+    showLoader('Finalizing profile…');
+    try {
+      await update(ref(rtdb,`users/${tempUserUid}`), { phone:code+' '+phone, company:esc(comp), address:esc(addr), jobTitle:esc(job)||'', industry:ind||'', linkedin:esc(link)||'' });
+      window.location.href='waiting.html';
+    } catch(e) { hideLoader(); toast('Error: '+e.message,'e'); }
+  };
+
+  window.handleGoogleLogin = async () => {
+    try {
+      showLoader('Connecting to Google…');
+      const res = await signInWithPopup(auth, googleProvider);
+      const user = res.user;
+      const snap = await get(child(ref(rtdb),`users/${user.uid}`));
+      if (snap.exists()) { checkAndRedirect(user.uid); return; }
+      const role = currentMode==='INVESTOR' ? 'Investor' : 'Inventor';
+      await set(ref(rtdb,`users/${user.uid}`), { name:user.displayName||'', email:user.email||'', role, profile:user.photoURL||'', status:'pending', createdAt:Date.now() });
+      checkAndRedirect(user.uid);
+    } catch(e) { hideLoader(); if (e.code!=='auth/popup-closed-by-user') toast('Login error: '+e.message,'e'); }
+  };
+
+  btn.onclick = async () => {
+    if (loginLocked) { toast('Too many attempts. Please wait 60 seconds.','w'); return; }
+    const emailVal=document.getElementById('email').value.trim();
+    const passVal=document.getElementById('password').value;
+    if (currentMode==='RESET') {
+      const rEmail=document.getElementById('resetEmail').value.trim();
+      if (!rEmail||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rEmail)) return toast('Please enter a valid email address.','w');
+      btn.textContent='Sending…'; btn.disabled=true;
+      try { await sendPasswordResetEmail(auth,rEmail); toast('Reset link sent! Check your inbox.','s'); openMenu('LOGIN'); }
+      catch(e) { toast('Error: '+e.message,'e'); } finally { btn.textContent='Send Reset Link'; btn.disabled=false; } return;
+    }
+    if (!emailVal||!passVal) return toast('Please fill in all fields.','w');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) return toast('Please enter a valid email address.','w');
+    showLoader('Authenticating…');
+    try {
+      if (currentMode==='LOGIN') {
+        loginAttempts++;
+        if (loginAttempts>=MAX_ATTEMPTS) {
+          loginLocked=true;
+          hideLoader();
+          toast('Too many failed attempts. Please wait 60 seconds.','w');
+          setTimeout(()=>{ loginLocked=false; loginAttempts=0; }, 60000);
+          return;
+        }
+        const res = await signInWithEmailAndPassword(auth,emailVal,passVal);
+        loginAttempts=0;
+        checkAndRedirect(res.user.uid);
+      } else {
+        if (!isStrongPass(passVal)) { hideLoader(); return toast('Password must be 8+ chars, with uppercase, number, and symbol (@$!%*?&).','w'); }
+        if (!document.getElementById('termsCheck').checked) { hideLoader(); return toast('Please accept the Terms of Service.','w'); }
+        const nameVal=document.getElementById('name').value.trim();
+        if (!nameVal) { hideLoader(); return toast('Please enter your full name.','w'); }
+        const role=currentMode==='INVENTOR'?'Inventor':'Investor';
+        const pic = ''; // profile picture set after profile completion step
+        const res = await createUserWithEmailAndPassword(auth,emailVal,passVal);
+        await set(ref(rtdb,'users/'+res.user.uid), { name:esc(nameVal), email:emailVal, profile:pic, role, status:'pending', createdAt:Date.now() });
+        checkAndRedirect(res.user.uid);
+      }
+    } catch(e) {
+      hideLoader();
+      if (e.code==='auth/email-already-in-use') { toast('Email already registered. Please log in.','w'); openMenu('LOGIN'); document.getElementById('email').value=emailVal; }
+      else if (e.code==='auth/wrong-password'||e.code==='auth/user-not-found') toast('Incorrect email or password.','e');
+      else toast('Error: '+e.message,'e');
+    }
+  };
+</script>
+
+<div id="toastContainer"></div>
+</body>
+</html>
