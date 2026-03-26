@@ -20,18 +20,6 @@
         .input-field:focus { border-color: #2563eb !important; box-shadow: 0 0 0 4px rgba(37,99,235,0.08) !important; background: #fff !important; }
         .chat-bubble-me { background: linear-gradient(135deg, #2563eb, #3b82f6) !important; border-radius: 18px 18px 4px 18px !important; box-shadow: 0 2px 8px rgba(37,99,235,0.18) !important; }
         .chat-bubble-them { background: #f1f5f9 !important; border-radius: 18px 18px 18px 4px !important; }
-
-        /* ==== PROFESSIONAL UPGRADE ==== */
-        body { font-family: 'DM Sans', sans-serif !important; background-color: #f0f4ff !important; }
-        .nav-item { font-family: 'DM Sans', sans-serif; border-radius: 12px !important; }
-        .nav-item.active { background: linear-gradient(135deg, #eff6ff, #dbeafe) !important; color: #2563eb !important; font-weight: 700 !important; }
-        .clean-card { border-radius: 18px !important; box-shadow: 0 2px 8px rgba(15,23,42,0.05) !important; }
-        h1,h2,h3,.font-bold { font-family: 'DM Sans', sans-serif; }
-        .text-2xl,.text-3xl,.text-4xl,.text-5xl { font-family: 'Outfit', sans-serif !important; letter-spacing: -0.5px; }
-        .input-field { border: 1.5px solid #e2e8f0 !important; border-radius: 11px !important; transition: all 0.2s !important; }
-        .input-field:focus { border-color: #2563eb !important; box-shadow: 0 0 0 4px rgba(37,99,235,0.08) !important; background: #fff !important; }
-        .chat-bubble-me { background: linear-gradient(135deg, #2563eb, #3b82f6) !important; border-radius: 18px 18px 4px 18px !important; box-shadow: 0 2px 8px rgba(37,99,235,0.18) !important; }
-        .chat-bubble-them { background: #f1f5f9 !important; border-radius: 18px 18px 18px 4px !important; }
         /* SECURITY: Hide body until verified */
         body { font-family: 'DM Sans', sans-serif; background-color: #f0f4ff; color: #0f172a; opacity: 0; transition: opacity 0.5s ease-in; }
         
@@ -356,7 +344,7 @@
         let projectsCache = []; let usersCache = []; let ticketCache = {};
         const TICKET_RETENTION = 30 * 24 * 60 * 60 * 1000; // 30 Days
 
-        const escapeHTML = (str) => str ? str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])) : "";
+        const escapeHTML = (str) => str ? String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])) : "";
 
         // --- STRICT SECURITY GATEKEEPER ---
         onAuthStateChanged(auth, async (user) => {
@@ -451,7 +439,7 @@
         function updateAdminStats() {
             const pendingUsers = usersCache.filter(u => (u.status||'pending').toLowerCase() === 'pending').length;
             const pendingProj  = projectsCache.filter(p => !p.status || p.status === 'submitted' || p.status === 'under_review').length;
-            const openTickets  = Object.values(ticketCache).filter(t => t.status !== 'resolved').length;
+            const openTickets  = Object.values(ticketCache).filter(t => (t.status||'open') !== 'resolved').length;
             document.getElementById('sPendingUsers').textContent = pendingUsers;
             document.getElementById('sPendingProj').textContent  = pendingProj;
             document.getElementById('sOpenTickets').textContent  = openTickets;
@@ -558,7 +546,7 @@
             return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><rect width='32' height='32' rx='16' fill='${encodeURIComponent(c)}'/><text x='50%' y='50%' dy='.35em' fill='white' font-size='13' font-family='system-ui' text-anchor='middle'>${l}</text></svg>`;
         }
 
-        // --- USERS LOGIC (COMPLETELY FIXED & NORMALIZED) ---
+        // --- USERS LOGIC ---
         function renderUsers() {
             const table = document.getElementById('userTable'); 
             const term = document.getElementById('userSearch').value.toLowerCase(); 
@@ -574,20 +562,12 @@
             });
             
             filtered.forEach(u => {
-                // NORMALIZATION: Forces all status strings to lower case so "APPROVED" and "approved" act exactly the same.
                 const currentStatus = (u.status || 'pending').toLowerCase();
-                
-                // Construct Badge
                 let badge = `<span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-[10px] font-bold uppercase">Pending</span>`;
-                if (currentStatus === 'live' || currentStatus === 'approved') {
-                    badge = `<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-[10px] font-bold uppercase">Approved</span>`;
-                } else if (currentStatus === 'disabled' || currentStatus === 'frozen' || currentStatus === 'rejected') {
-                    badge = `<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-[10px] font-bold uppercase">Disabled</span>`;
-                }
+                if (currentStatus === 'live' || currentStatus === 'approved') badge = `<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-[10px] font-bold uppercase">Approved</span>`;
+                else if (currentStatus === 'disabled' || currentStatus === 'frozen' || currentStatus === 'rejected') badge = `<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-[10px] font-bold uppercase">Disabled</span>`;
                 
-                // Construct Controls
                 let controlsHTML = `<button onclick="inspectUser('${u.uid}')" class="text-xs font-bold bg-blue-50 text-blue-600 px-3 py-1.5 rounded border border-blue-200 hover:bg-blue-100">Inspect</button>`;
-
                 if (currentStatus === 'pending') {
                     controlsHTML += `
                         <button onclick="updateUserStatus('${u.uid}', 'approved')" class="text-xs font-bold bg-green-50 text-green-600 px-3 py-1.5 rounded border border-green-200 hover:bg-green-100">Approve</button>
@@ -598,7 +578,6 @@
                 } else {
                     controlsHTML += `<button onclick="updateUserStatus('${u.uid}', 'disabled')" class="text-xs font-bold bg-amber-50 text-amber-600 px-3 py-1.5 rounded border border-amber-200 hover:bg-amber-100">Disable</button>`;
                 }
-
                 controlsHTML += `<button onclick="deleteUser('${u.uid}')" class="text-xs font-bold bg-red-50 text-red-600 px-3 py-1.5 rounded border border-red-200 hover:bg-red-100">Delete</button>`;
 
                 const joinedDate = u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—';
@@ -619,16 +598,15 @@
             });
         }
         document.getElementById('userSearch').addEventListener('input', renderUsers);
-        // roleFilter and statusFilter use onchange inline already
 
         window.inspectUser = (uid) => {
             const u = usersCache.find(x => x.uid === uid); if (!u) return;
-            const currentStatus = (u.status || 'pending').toLowerCase(); // Normalize for modal too
+            const currentStatus = (u.status || 'pending').toLowerCase(); 
 
             document.getElementById('mPic').src = u.profile || adminAvatarSVG(u.name || '?'); 
             document.getElementById('mName').innerText = u.name || "No Name"; 
             document.getElementById('mRole').innerText = u.role; 
-            document.getElementById('mStatus').innerText = currentStatus; // Will perfectly match the DB state
+            document.getElementById('mStatus').innerText = currentStatus; 
             document.getElementById('mEmail').innerText = u.email || "-"; 
             document.getElementById('mPhone').innerText = u.phone || "-"; 
             document.getElementById('mAddress').innerText = u.address || "Not Provided"; 
@@ -646,7 +624,6 @@
                 await update(ref(rtdb, `users/${uid}`), { status: newStatus });
                 if (newStatus === 'approved') {
                     await sendNotification(uid, 'Your account has been verified and approved! You can now access the platform.');
-                    // If investor, publish to /directory/ so founders can find them
                     if (targetUser && targetUser.role === 'Investor') {
                         await set(ref(rtdb, `directory/${uid}`), {
                             uid, name: targetUser.name||'', company: targetUser.company||'',
@@ -655,7 +632,6 @@
                         });
                     }
                 } else if (newStatus === 'disabled') {
-                    // Remove from directory if disabled
                     remove(ref(rtdb, `directory/${uid}`)).catch(()=>{});
                 }
                 await logAdminAction(newStatus==='approved'?'approve_user':'disable_user', uid);
@@ -673,7 +649,7 @@
             } catch(e) { toast('Error: '+e.message,'error'); } 
         };
 
-        // --- SUPPORT ---
+        // --- SUPPORT (FIXED FALLBACKS) ---
         function renderSupport() {
             const grid = document.getElementById('ticketGrid'); const history = document.getElementById('resolvedGrid'); const term = document.getElementById('searchSupport').value.toLowerCase(); 
             grid.innerHTML = ""; history.innerHTML = "";
@@ -689,24 +665,32 @@
 
             tickets.forEach(([key, t]) => {
                 if (term && !JSON.stringify(t).toLowerCase().includes(term)) return;
-                const time = new Date(t.timestamp).toLocaleDateString();
-                const badgeColor = t.role === 'Investor' ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600';
+                
+                // Bulletproof Fallbacks to prevent UI crashing on undefined fields
+                const time = t.timestamp ? new Date(t.timestamp).toLocaleDateString() : 'Recent';
+                const role = t.role || 'User';
+                const subject = t.subject || t.issue || t.title || 'Support Request';
+                const message = t.message || t.description || t.details || 'No message details provided.';
+                const name = t.name || t.userName || 'Anonymous';
+                const status = t.status || 'open';
+
+                const badgeColor = role === 'Investor' ? 'bg-blue-100 text-blue-600' : (role === 'User' ? 'bg-slate-100 text-slate-600' : 'bg-purple-100 text-purple-600');
                 
                 const html = `
-                    <div class="clean-card p-5 border-l-4 ${t.status === 'resolved' ? 'border-l-green-500' : 'border-l-blue-500'}">
-                        <div class="flex justify-between items-start mb-2"><span class="badge ${badgeColor}">${t.role}</span><span class="text-xs text-slate-400 font-mono">${time}</span></div>
-                        <h4 class="font-bold text-slate-900 text-sm mb-1">${escapeHTML(t.subject)}</h4>
-                        <p class="text-xs text-slate-600 mb-4 line-clamp-2">${escapeHTML(t.message)}</p>
+                    <div class="clean-card p-5 border-l-4 ${status === 'resolved' ? 'border-l-green-500' : 'border-l-blue-500'}">
+                        <div class="flex justify-between items-start mb-2"><span class="badge ${badgeColor}">${escapeHTML(role)}</span><span class="text-xs text-slate-400 font-mono">${time}</span></div>
+                        <h4 class="font-bold text-slate-900 text-sm mb-1">${escapeHTML(subject)}</h4>
+                        <p class="text-xs text-slate-600 mb-4 line-clamp-2">${escapeHTML(message)}</p>
                         <div class="flex justify-between items-center border-t border-slate-50 pt-3 gap-2">
-                            <span class="text-xs font-bold text-slate-500 truncate max-w-[100px]">${escapeHTML(t.name)}</span>
+                            <span class="text-xs font-bold text-slate-500 truncate max-w-[100px]">${escapeHTML(name)}</span>
                             <div class="flex gap-2">
-                                ${t.status !== 'resolved' ? `<button onclick="resolveAndNotify('${key}')" class="px-3 py-1.5 bg-green-50 text-green-700 text-[10px] font-bold rounded hover:bg-green-100 border border-green-200">Resolve & Reply</button>` : `<span class="text-[10px] font-bold text-green-600 px-2 py-1 bg-green-50 rounded">Resolved</span>`}
+                                ${status !== 'resolved' ? `<button onclick="resolveAndNotify('${key}')" class="px-3 py-1.5 bg-green-50 text-green-700 text-[10px] font-bold rounded hover:bg-green-100 border border-green-200">Resolve & Reply</button>` : `<span class="text-[10px] font-bold text-green-600 px-2 py-1 bg-green-50 rounded">Resolved</span>`}
                                 <button onclick="deleteTicket('${key}')" class="px-3 py-1.5 bg-red-50 text-red-600 text-[10px] font-bold rounded hover:bg-red-100 border border-red-200">Delete</button>
                             </div>
                         </div>
                     </div>
                 `;
-                if (t.status === 'resolved') history.innerHTML += html;
+                if (status === 'resolved') history.innerHTML += html;
                 else grid.innerHTML += html;
             });
         }
@@ -714,17 +698,28 @@
 
         window.resolveAndNotify = async (key) => {
             const t = ticketCache[key]; if(!t) return toast("Ticket not found.","error");
+            
+            // Fallbacks for the notification & email
+            const subject = t.subject || t.issue || t.title || 'Support Ticket';
+            const name = t.name || t.userName || 'User';
+            const email = t.email || t.userEmail || '';
+
             if(!(await confirmDialog('Mark as resolved?','An email client will open to reply to the user.'))) return;
             await update(ref(rtdb, `support_tickets/${key}`), { status: 'resolved' });
-            if (t.uid && t.uid !== 'anonymous') await sendNotification(t.uid, `Your support ticket "${t.subject}" has been resolved. Check your email.`);
-            window.location.href = `mailto:${t.email}?subject=${encodeURIComponent(`[Resolved] Re: ${t.subject} - PushIdea Support`)}&body=${encodeURIComponent(`Hi ${t.name},\n\nThis ticket has been marked as resolved.\n\nTicket: ${t.subject}\n\nBest,\nPushIdea Admin`)}`;
+            
+            if (t.uid && t.uid !== 'anonymous') await sendNotification(t.uid, `Your support ticket "${subject}" has been resolved. Check your email.`);
+            
+            if (email) {
+                window.location.href = `mailto:${email}?subject=${encodeURIComponent(`[Resolved] Re: ${subject} - PushIdea Support`)}&body=${encodeURIComponent(`Hi ${name},\n\nThis ticket has been marked as resolved.\n\nTicket: ${subject}\n\nBest,\nPushIdea Admin`)}`;
+            } else {
+                toast("Ticket resolved! (No email address was provided to reply to)", "success");
+            }
         };
 
         window.deleteTicket = async (key) => { if(!(await confirmDialog('Delete this ticket?',''))) return; await remove(ref(rtdb, `support_tickets/${key}`)); toast('Ticket deleted.','success'); };
     </script>
 
 
-<!-- ADMIN MOBILE HEADER -->
 <div id="adminMobileHeader">
   <div style="display:flex;align-items:center;gap:8px;">
     <div style="width:28px;height:28px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);border-radius:7px;display:flex;align-items:center;justify-content:center;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
@@ -741,7 +736,6 @@
     </button>
   </div>
 </div>
-<!-- ADMIN MOBILE TAB NAV -->
 <div id="adminMobTabs">
   <button class="adm-mob-btn active" onclick="switchSection('projects');document.getElementById('mobPageTitle').textContent='Projects';document.querySelectorAll('.adm-mob-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 01-1 1H9a1 1 0 01-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 017-7z"/></svg>
