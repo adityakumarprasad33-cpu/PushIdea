@@ -6,57 +6,7 @@
 <title>Account Pending | PushIdea</title>
 <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/1067/1067357.png">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-.hidden{display:none!important;}
-body{font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#eef2ff;position:relative;overflow:hidden;}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 55% at 15% 20%,rgba(37,99,235,.1) 0%,transparent 55%),radial-gradient(ellipse 55% 45% at 85% 75%,rgba(99,102,241,.08) 0%,transparent 55%);z-index:0;}
-body::after{content:'';position:fixed;inset:0;background-image:radial-gradient(rgba(37,99,235,.09) 1px,transparent 1px);background-size:28px 28px;mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,#000 30%,transparent 80%);z-index:0;}
-.orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.1;animation:drift 10s ease-in-out infinite;z-index:0;pointer-events:none;}
-.orb-1{width:450px;height:450px;background:#3b82f6;top:-150px;left:-100px;}
-.orb-2{width:350px;height:350px;background:#6366f1;bottom:-80px;right:-60px;animation-delay:-4s;}
-@keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-25px)}}
-.card{position:relative;z-index:10;background:#fff;border:1px solid rgba(226,232,240,.9);border-radius:26px;padding:44px 40px;max-width:440px;width:100%;text-align:center;box-shadow:0 0 0 1px rgba(255,255,255,.7) inset,0 28px 60px -14px rgba(15,23,42,.12);animation:cardIn .7s cubic-bezier(.16,1,.3,1) forwards;}
-@keyframes cardIn{from{opacity:0;transform:translateY(28px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-.logo{display:inline-flex;align-items:center;gap:9px;margin-bottom:32px;}
-.logo-mark{width:34px;height:34px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(37,99,235,.28);}
-.logo-name{font-family:'Outfit',sans-serif;font-weight:700;font-size:17px;color:#0f172a;letter-spacing:-.3px;}
-.icon-wrap{width:80px;height:80px;position:relative;margin:0 auto 28px;}
-.icon-ring{position:absolute;inset:0;border-radius:50%;animation:ringP 2.5s ease-in-out infinite;}
-.ring-1{background:rgba(245,158,11,.07);animation-delay:0s;}
-.ring-2{inset:8px;background:rgba(245,158,11,.11);animation-delay:.3s;}
-.ring-3{inset:16px;background:rgba(245,158,11,.16);animation-delay:.6s;}
-@keyframes ringP{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.07);opacity:1}}
-.icon-center{position:absolute;inset:20px;background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(245,158,11,.2);box-shadow:0 4px 14px rgba(245,158,11,.18);}
-h1{font-family:'Outfit',sans-serif;font-size:22px;font-weight:700;color:#0f172a;letter-spacing:-.4px;margin-bottom:8px;}
-.sub{font-size:14px;color:#64748b;line-height:1.65;margin-bottom:30px;}
-.sub strong{color:#334155;font-weight:600;}
-.steps{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:28px;}
-.step{display:flex;flex-direction:column;align-items:center;gap:5px;}
-.step-dot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:'Outfit',sans-serif;}
-.step-done{background:#dcfce7;color:#16a34a;border:1.5px solid #86efac;}
-.step-active{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;border:1.5px solid #fcd34d;animation:stepP 2s ease-in-out infinite;}
-.step-pending{background:#f1f5f9;color:#94a3b8;border:1.5px solid #e2e8f0;}
-@keyframes stepP{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,.3)}50%{box-shadow:0 0 0 6px rgba(245,158,11,0)}}
-.step-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:#94a3b8;}
-.step-lbl.active{color:#92400e;}
-.step-lbl.done{color:#16a34a;}
-.step-conn{width:36px;height:2px;background:linear-gradient(90deg,#86efac,#fcd34d);margin-bottom:14px;border-radius:2px;}
-.status-box{background:linear-gradient(135deg,#f8fafc,#f1f5f9);border:1px solid #e2e8f0;border-radius:14px;padding:16px 18px;margin-bottom:24px;text-align:left;}
-.status-header{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
-.live-dot{width:7px;height:7px;background:#22c55e;border-radius:50%;animation:liveP 1.5s ease-in-out infinite;flex-shrink:0;}
-@keyframes liveP{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)}50%{box-shadow:0 0 0 5px rgba(34,197,94,0)}}
-.status-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#64748b;}
-#statusText{font-size:13.5px;font-weight:600;color:#334155;}
-.logout-btn{font-size:13px;font-weight:600;color:#ef4444;background:none;border:1.5px solid #fecaca;cursor:pointer;padding:8px 20px;border-radius:10px;transition:all .2s;display:inline-flex;align-items:center;gap:6px;}
-.logout-btn:hover{background:#fef2f2;border-color:#fca5a5;}
-.tip{font-size:11.5px;color:#94a3b8;margin-top:16px;font-style:italic;}
-
-@media(max-width:480px){
-  .input-field{font-size:16px!important;}
-  body{padding:16px!important;}
-}
-</style>
+<link rel="stylesheet" href="css/waiting.css">
 </head>
 <body>
 <div class="orb orb-1"></div>
@@ -121,37 +71,6 @@ h1{font-family:'Outfit',sans-serif;font-size:22px;font-weight:700;color:#0f172a;
   <p class="tip">Typically reviewed within 24–48 hours · Do not close this tab</p>
 </div>
 
-<script type="module">
-  import { auth, rtdb } from './firebase-config.js';
-  import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-  window.auth = auth;
-
-  onAuthStateChanged(auth, (user) => {
-    if (!user) { window.location.replace('index.html'); return; }
-    const st = document.getElementById('statusText');
-    const userRef = ref(rtdb, 'users/' + user.uid);
-    onValue(userRef, (snap) => {
-      const data = snap.val();
-      if (!data) return;
-      const status = (data.status || 'pending').toLowerCase();
-      if (status === 'approved' || status === 'live') {
-        st.textContent = 'Approved! Redirecting…';
-        st.style.color = '#16a34a';
-        setTimeout(() => {
-          window.location.href = data.role === 'Inventor' ? 'inventor.html' : 'investor-dashboard.html';
-        }, 1000);
-      } else if (status === 'disabled' || status === 'frozen' || status === 'rejected') {
-        signOut(auth).then(() => {
-          document.body.innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#fef2f2;"><div style="text-align:center;padding:40px;"><p style="font-family:Outfit,sans-serif;font-size:18px;font-weight:700;color:#dc2626;">Account Disabled</p><p style="color:#64748b;margin-top:8px;font-size:14px;">Contact support for assistance.</p><a href="index.html" style="display:inline-block;margin-top:18px;padding:10px 24px;background:#dc2626;color:#fff;border-radius:50px;font-weight:700;font-size:13px;text-decoration:none;">Go Back</a></div></div>';
-          window.location.replace('index.html');
-        });
-      } else {
-        st.textContent = 'Still under review — we are checking your profile.';
-      }
-    });
-  });
-</script>
+<script type="module" src="js/waiting.js"></script>
 </body>
 </html>
